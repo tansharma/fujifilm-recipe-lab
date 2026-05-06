@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Leica-inspired Fujifilm camera recipes">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Recipe Lab">
+  
+  <title>Recipe Lab</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%23000' width='180' height='180'/><text x='50%' y='50%' font-size='80' font-weight='bold' fill='%23fff' text-anchor='middle' dominant-baseline='central'>RL</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%23000' width='180' height='180' rx='45'/><text x='50%' y='50%' font-size='80' font-weight='bold' fill='%23fff' text-anchor='middle' dominant-baseline='central'>RL</text></svg>">
+  
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="app" class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <h1 class="app-title">Recipe Lab</h1>
+      <p class="app-subtitle">Leica-inspired Fujifilm recipes</p>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-main">
+      <!-- Camera Selection -->
+      <section class="section camera-section">
+        <label for="camera-select" class="section-label">Select your camera</label>
+        <select id="camera-select" class="input-select">
+          <option value="">— Choose camera —</option>
+          <option value="x-trans-2">X-Trans II (X-T1, X100T, X30)</option>
+          <option value="x-trans-3">X-Trans III (X-T2, X-Pro2, X100F)</option>
+          <option value="x-trans-4">X-Trans IV (X-T4, X-S10, X-T3)</option>
+          <option value="x-trans-5">X-Trans V (X-T5, X-H2, X100VI)</option>
+        </select>
+      </section>
+
+      <!-- Mode Tabs -->
+      <nav class="mode-tabs" role="tablist">
+        <button class="tab-button active" data-mode="presets" role="tab" aria-selected="true">Presets</button>
+        <button class="tab-button" data-mode="film" role="tab" aria-selected="false">Film matcher</button>
+        <button class="tab-button" data-mode="compare" role="tab" aria-selected="false">Compare</button>
+        <button class="tab-button" data-mode="history" role="tab" aria-selected="false">History</button>
+      </nav>
+
+      <!-- Presets Tab -->
+      <section id="presets-tab" class="tab-content active" role="tabpanel">
+        <div class="recipe-grid">
+          <button class="recipe-button" data-recipe="m10-rich">M10 High Contrast</button>
+          <button class="recipe-button" data-recipe="m10-monochrome">M10 Monochrome</button>
+          <button class="recipe-button" data-recipe="m10-street">M10 Street Night</button>
+          <button class="recipe-button" data-recipe="classic-heritage">The Leitz</button>
+          <button class="recipe-button" data-recipe="vintage-summicron">Vintage Summicron</button>
+          <button class="recipe-button" data-recipe="gritty-reporter">M-Reporter</button>
+        </div>
+      </section>
+
+      <!-- Film Matcher Tab -->
+      <section id="film-tab" class="tab-content" role="tabpanel">
+        <div class="recipe-grid">
+          <button class="recipe-button" data-film="portra-400">Portra 400</button>
+          <button class="recipe-button" data-film="kodachrome-64">Kodachrome 64</button>
+          <button class="recipe-button" data-film="tri-x-400">Tri-X 400 BW</button>
+          <button class="recipe-button" data-film="hp5-plus">HP5 Plus</button>
+          <button class="recipe-button" data-film="ektachrome-64">Ektachrome 64</button>
+          <button class="recipe-button" data-film="portra-160">Portra 160 NC</button>
+        </div>
+      </section>
+
+      <!-- Compare Tab -->
+      <section id="compare-tab" class="tab-content" role="tabpanel">
+        <div class="compare-selectors">
+          <div class="compare-selector-row">
+            <div class="compare-selector-item">
+              <label for="compare-1" class="slot-label">Recipe 1</label>
+              <select id="compare-1" class="slot-select">
+                <option value="">— Select —</option>
+              </select>
+            </div>
+            <div class="compare-selector-item">
+              <label for="compare-2" class="slot-label">Recipe 2</label>
+              <select id="compare-2" class="slot-select">
+                <option value="">— Select —</option>
+              </select>
+            </div>
+            <div class="compare-selector-item">
+              <label for="compare-3" class="slot-label">Recipe 3</label>
+              <select id="compare-3" class="slot-select">
+                <option value="">— Select —</option>
+              </select>
+            </div>
+            <div class="compare-selector-item">
+              <label for="compare-4" class="slot-label">Recipe 4</label>
+              <select id="compare-4" class="slot-select">
+                <option value="">— Select —</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div id="compare-table-container">
+          <p class="placeholder-text">Select two or more recipes to compare</p>
+        </div>
+      </section>
+
+      <!-- History Tab -->
+      <section id="history-tab" class="tab-content" role="tabpanel">
+        <div id="history-content" class="history-list">
+          <p class="placeholder-text">No recipes viewed yet</p>
+        </div>
+      </section>
+
+      <!-- Recipe Card Display -->
+      <section id="recipe-card" class="recipe-card hidden">
+        <div class="recipe-header">
+          <h2 id="recipe-title" class="recipe-title">Recipe title</h2>
+          <div class="recipe-meta">
+            <span class="meta-item">
+              <span class="meta-label">Camera</span>
+              <span id="recipe-camera" class="meta-value">—</span>
+            </span>
+            <span class="meta-item">
+              <span class="meta-label">Style</span>
+              <span id="recipe-style" class="meta-value">—</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="recipe-settings-grid">
+          <div class="setting-pair">
+            <span class="setting-label">Film simulation</span>
+            <span id="recipe-film" class="setting-value">—</span>
+          </div>
+          <div class="setting-pair">
+            <span class="setting-label">Dynamic range</span>
+            <span id="recipe-dr" class="setting-value">—</span>
+          </div>
+          <div class="setting-pair">
+            <span class="setting-label">WB shift</span>
+            <span id="recipe-wb" class="setting-value">—</span>
+          </div>
+          <div class="setting-pair">
+            <span class="setting-label">Highlight tone</span>
+            <span id="recipe-high" class="setting-value">—</span>
+          </div>
+          <div class="setting-pair">
+            <span class="setting-label">Shadow tone</span>
+            <span id="recipe-shad" class="setting-value">—</span>
+          </div>
+          <div class="setting-pair">
+            <span class="setting-label">Color</span>
+            <span id="recipe-color" class="setting-value">—</span>
+          </div>
+          <div class="setting-pair">
+            <span class="setting-label">Sharpness</span>
+            <span id="recipe-sharp" class="setting-value">—</span>
+          </div>
+          <div class="setting-pair">
+            <span class="setting-label">Noise reduction</span>
+            <span id="recipe-nr" class="setting-value">—</span>
+          </div>
+          <div class="setting-pair">
+            <span class="setting-label">Grain effect</span>
+            <span id="recipe-grain" class="setting-value">—</span>
+          </div>
+        </div>
+
+        <div class="recipe-tip-section">
+          <h3 class="tip-title">Usage & guidance</h3>
+          <p id="recipe-tip" class="tip-text">—</p>
+        </div>
+
+        <div class="recipe-footer">
+          <button id="copy-button" class="button button-primary">Copy settings</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Toast notification -->
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+  </div>
+
+  <script src="js/recipes.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/permissions.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/comparison.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(err => {
+        console.log('Service Worker registration failed:', err);
+      });
+    }
+  </script>
+</body>
+</html>
