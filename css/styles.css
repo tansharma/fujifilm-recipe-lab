@@ -9,20 +9,102 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/* ─── Colour tokens (light defaults) ─────────────────────────────────────── */
+
+:root {
+  color-scheme: light;
+
+  --bg:             #ffffff;
+  --surface:        #f9f9f9;
+  --surface-lo:     #f0f0f0;
+  --surface-hi:     #fafafa;
+  --surface-press:  #e9e9e9;
+  --input-bg:       #ffffff;
+  --input-bg-sm:    #ffffff;
+  --table-head-bg:  #f0f0f0;
+
+  --text:           #000000;
+  --text-2:         #666666;
+  --text-3:         #999999;
+
+  --border:         rgba(0, 0, 0, 0.1);
+  --border-med:     rgba(0, 0, 0, 0.2);
+  --border-sub:     rgba(0, 0, 0, 0.05);
+  --border-table:   rgba(0, 0, 0, 0.15);
+
+  --accent:         #000000;
+  --on-accent:      #ffffff;
+  --tap:            rgba(0, 0, 0, 0.05);
+  --diff-bg:        rgba(255, 190, 0, 0.15);
+}
+
+/* Dark tokens — system preference (blocked when forced light) */
+@media (prefers-color-scheme: dark) {
+  :root:not(.theme-light) {
+    color-scheme: dark;
+
+    --bg:             #000000;
+    --surface:        #1a1a1a;
+    --surface-lo:     #0a0a0a;
+    --surface-hi:     #111111;
+    --surface-press:  #0a0a0a;
+    --input-bg:       #1a1a1a;
+    --input-bg-sm:    #0a0a0a;
+    --table-head-bg:  #1a1a1a;
+
+    --text:           #ffffff;
+    --text-2:         #999999;
+    --text-3:         #666666;
+
+    --border:         rgba(255, 255, 255, 0.1);
+    --border-med:     rgba(255, 255, 255, 0.2);
+    --border-sub:     rgba(255, 255, 255, 0.05);
+    --border-table:   rgba(255, 255, 255, 0.15);
+
+    --accent:         #ffffff;
+    --on-accent:      #000000;
+    --tap:            rgba(255, 255, 255, 0.05);
+    --diff-bg:        rgba(255, 190, 0, 0.1);
+  }
+}
+
+/* Dark tokens — forced via toggle */
+:root.theme-dark {
+  color-scheme: dark;
+
+  --bg:             #000000;
+  --surface:        #1a1a1a;
+  --surface-lo:     #0a0a0a;
+  --surface-hi:     #111111;
+  --surface-press:  #0a0a0a;
+  --input-bg:       #1a1a1a;
+  --input-bg-sm:    #0a0a0a;
+  --table-head-bg:  #1a1a1a;
+
+  --text:           #ffffff;
+  --text-2:         #999999;
+  --text-3:         #666666;
+
+  --border:         rgba(255, 255, 255, 0.1);
+  --border-med:     rgba(255, 255, 255, 0.2);
+  --border-sub:     rgba(255, 255, 255, 0.05);
+  --border-table:   rgba(255, 255, 255, 0.15);
+
+  --accent:         #ffffff;
+  --on-accent:      #000000;
+  --tap:            rgba(255, 255, 255, 0.05);
+  --diff-bg:        rgba(255, 190, 0, 0.1);
+}
+
+/* ─── Base ────────────────────────────────────────────────────────────────── */
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   font-size: 16px;
   line-height: 1.5;
-  color: #000;
-  background-color: #fff;
+  color: var(--text);
+  background-color: var(--bg);
   overflow-x: hidden;
-}
-
-@media (prefers-color-scheme: dark) {
-  body {
-    background-color: #000;
-    color: #fff;
-  }
 }
 
 .app-container {
@@ -33,37 +115,70 @@ body {
   margin: 0 auto;
 }
 
-.app-header {
-  padding: 1.5rem 1rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  text-align: center;
-  background-color: #f9f9f9;
-}
+/* ─── Header ──────────────────────────────────────────────────────────────── */
 
-@media (prefers-color-scheme: dark) {
-  .app-header {
-    background-color: #1a1a1a;
-    border-bottom-color: rgba(255, 255, 255, 0.1);
-  }
+.app-header {
+  position: relative;
+  padding: 1.5rem 1rem;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+  background-color: var(--surface);
 }
 
 .app-title {
   font-size: 28px;
   font-weight: 600;
   margin-bottom: 0.25rem;
+  color: var(--text);
 }
 
 .app-subtitle {
   font-size: 14px;
-  color: #666;
+  color: var(--text-2);
   margin: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  .app-subtitle {
-    color: #999;
-  }
+/* ─── Theme segmented control ─────────────────────────────────────────────── */
+
+.theme-control {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  background-color: var(--border);
+  border-radius: 8px;
+  padding: 2px;
+  gap: 1px;
 }
+
+.theme-segment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--text-2);
+  transition: background-color 0.15s, color 0.15s, box-shadow 0.15s;
+  line-height: 1;
+}
+
+.theme-segment svg {
+  display: block;
+}
+
+.theme-segment.active {
+  background-color: var(--bg);
+  color: var(--text);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+/* ─── Main ────────────────────────────────────────────────────────────────── */
 
 .app-main {
   flex: 1;
@@ -80,56 +195,48 @@ body {
   display: block;
   font-size: 12px;
   font-weight: 600;
-  color: #666;
+  color: var(--text-2);
   margin-bottom: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-@media (prefers-color-scheme: dark) {
-  .section-label {
-    color: #999;
-  }
-}
+/* ─── Camera select ───────────────────────────────────────────────────────── */
 
 .input-select {
   width: 100%;
-  padding: 12px 12px;
+  padding: 12px 36px 12px 12px;
   font-size: 16px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-med);
   border-radius: 8px;
-  background-color: #fff;
-  color: #000;
+  background-color: var(--input-bg);
+  color: var(--text);
   -webkit-appearance: none;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23000' d='M1 4l5 4 5-4'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
-  padding-right: 36px;
 }
 
+/* Arrow must be overridden via selector since url() doesn't accept CSS vars */
 @media (prefers-color-scheme: dark) {
-  .input-select {
-    background-color: #1a1a1a;
-    color: #fff;
-    border-color: rgba(255, 255, 255, 0.2);
+  :root:not(.theme-light) .input-select {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23fff' d='M1 4l5 4 5-4'/%3E%3C/svg%3E");
   }
 }
+:root.theme-dark .input-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23fff' d='M1 4l5 4 5-4'/%3E%3C/svg%3E");
+}
+
+/* ─── Tabs ────────────────────────────────────────────────────────────────── */
 
 .mode-tabs {
   display: flex;
   gap: 0.5rem;
   margin-bottom: 1.5rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid var(--border);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-}
-
-@media (prefers-color-scheme: dark) {
-  .mode-tabs {
-    border-bottom-color: rgba(255, 255, 255, 0.1);
-  }
 }
 
 .tab-button {
@@ -139,38 +246,19 @@ body {
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
-  color: #666;
+  color: var(--text-2);
   border-bottom: 2px solid transparent;
   white-space: nowrap;
   transition: color 0.2s;
 }
 
-@media (prefers-color-scheme: dark) {
-  .tab-button {
-    color: #999;
-  }
-}
-
 .tab-button.active {
-  color: #000;
-  border-bottom-color: #000;
-}
-
-@media (prefers-color-scheme: dark) {
-  .tab-button.active {
-    color: #fff;
-    border-bottom-color: #fff;
-  }
+  color: var(--accent);
+  border-bottom-color: var(--accent);
 }
 
 .tab-button:active {
-  background-color: rgba(0, 0, 0, 0.05);
-}
-
-@media (prefers-color-scheme: dark) {
-  .tab-button:active {
-    background-color: rgba(255, 255, 255, 0.05);
-  }
+  background-color: var(--tap);
 }
 
 .tab-content {
@@ -184,8 +272,10 @@ body {
 
 @keyframes fadeIn {
   from { opacity: 0; }
-  to { opacity: 1; }
+  to   { opacity: 1; }
 }
+
+/* ─── Recipe grid ─────────────────────────────────────────────────────────── */
 
 .recipe-grid {
   display: grid;
@@ -201,10 +291,10 @@ body {
 
 .recipe-button {
   padding: 12px 8px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-med);
   border-radius: 8px;
-  background-color: #fff;
-  color: #000;
+  background-color: var(--input-bg);
+  color: var(--text);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -213,85 +303,45 @@ body {
   word-wrap: break-word;
 }
 
-@media (prefers-color-scheme: dark) {
-  .recipe-button {
-    background-color: #1a1a1a;
-    color: #fff;
-    border-color: rgba(255, 255, 255, 0.2);
-  }
-}
-
 .recipe-button:active {
   transform: scale(0.98);
-  border-color: #000;
-}
-
-@media (prefers-color-scheme: dark) {
-  .recipe-button:active {
-    border-color: #fff;
-  }
+  border-color: var(--accent);
 }
 
 .recipe-button.selected {
-  background-color: #000;
-  color: #fff;
-  border-color: #000;
+  background-color: var(--accent);
+  color: var(--on-accent);
+  border-color: var(--accent);
 }
 
-@media (prefers-color-scheme: dark) {
-  .recipe-button.selected {
-    background-color: #fff;
-    color: #000;
-    border-color: #fff;
-  }
-}
+/* ─── Compare tab ─────────────────────────────────────────────────────────── */
 
 .slot-label {
   display: block;
   font-size: 12px;
   font-weight: 600;
-  color: #666;
+  color: var(--text-2);
   margin-bottom: 0.5rem;
-}
-
-@media (prefers-color-scheme: dark) {
-  .slot-label {
-    color: #999;
-  }
 }
 
 .slot-select {
   width: 100%;
   padding: 8px;
   font-size: 14px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-med);
   border-radius: 4px;
-  background-color: #fff;
-  color: #000;
+  background-color: var(--input-bg-sm);
+  color: var(--text);
   -webkit-appearance: none;
   appearance: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  .slot-select {
-    background-color: #0a0a0a;
-    color: #fff;
-    border-color: rgba(255, 255, 255, 0.2);
-  }
-}
-
 .placeholder-text {
   font-size: 12px;
-  color: #999;
+  color: var(--text-3);
   text-align: center;
   margin: 0;
   padding: 1.5rem 0;
-}
-
-@media (prefers-color-scheme: dark) {
-  .placeholder-text {
-    color: #666;
-  }
 }
 
 .compare-selectors {
@@ -313,14 +363,8 @@ body {
 .compare-table-wrapper {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border);
   border-radius: 8px;
-}
-
-@media (prefers-color-scheme: dark) {
-  .compare-table-wrapper {
-    border-color: rgba(255, 255, 255, 0.1);
-  }
 }
 
 .compare-table {
@@ -333,28 +377,17 @@ body {
   padding: 10px 12px;
   text-align: left;
   font-weight: 600;
-  background-color: #f0f0f0;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  background-color: var(--table-head-bg);
+  border-bottom: 2px solid var(--border-table);
   white-space: nowrap;
-}
-
-@media (prefers-color-scheme: dark) {
-  .compare-table th {
-    background-color: #1a1a1a;
-    border-bottom-color: rgba(255, 255, 255, 0.15);
-  }
+  color: var(--text);
 }
 
 .compare-table td {
   padding: 8px 12px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid var(--border-sub);
   white-space: nowrap;
-}
-
-@media (prefers-color-scheme: dark) {
-  .compare-table td {
-    border-bottom-color: rgba(255, 255, 255, 0.05);
-  }
+  color: var(--text);
 }
 
 .compare-table tr:last-child td {
@@ -364,42 +397,24 @@ body {
 .compare-table td.setting-label-cell {
   font-size: 12px;
   font-weight: 600;
-  color: #666;
-  background-color: #fafafa;
+  color: var(--text-2);
+  background-color: var(--surface-hi);
   white-space: nowrap;
 }
 
-@media (prefers-color-scheme: dark) {
-  .compare-table td.setting-label-cell {
-    color: #999;
-    background-color: #111;
-  }
-}
-
 .compare-table td.diff {
-  background-color: rgba(255, 190, 0, 0.15);
+  background-color: var(--diff-bg);
   font-weight: 600;
 }
 
-@media (prefers-color-scheme: dark) {
-  .compare-table td.diff {
-    background-color: rgba(255, 190, 0, 0.1);
-  }
-}
+/* ─── Recipe card ─────────────────────────────────────────────────────────── */
 
 .recipe-card {
   margin-top: 1.5rem;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border);
   border-radius: 8px;
-  background-color: #fff;
+  background-color: var(--input-bg);
   overflow: hidden;
-}
-
-@media (prefers-color-scheme: dark) {
-  .recipe-card {
-    background-color: #1a1a1a;
-    border-color: rgba(255, 255, 255, 0.1);
-  }
 }
 
 .recipe-card.hidden {
@@ -408,21 +423,15 @@ body {
 
 .recipe-header {
   padding: 1rem;
-  background-color: #f9f9f9;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-@media (prefers-color-scheme: dark) {
-  .recipe-header {
-    background-color: #0a0a0a;
-    border-bottom-color: rgba(255, 255, 255, 0.1);
-  }
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
 }
 
 .recipe-title {
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 0.75rem;
+  color: var(--text);
 }
 
 .recipe-meta {
@@ -438,25 +447,13 @@ body {
 }
 
 .meta-label {
-  color: #666;
+  color: var(--text-2);
   font-weight: 600;
-}
-
-@media (prefers-color-scheme: dark) {
-  .meta-label {
-    color: #999;
-  }
 }
 
 .meta-value {
   font-weight: 600;
-  color: #000;
-}
-
-@media (prefers-color-scheme: dark) {
-  .meta-value {
-    color: #fff;
-  }
+  color: var(--text);
 }
 
 .recipe-settings-grid {
@@ -480,68 +477,37 @@ body {
 
 .setting-label {
   font-size: 12px;
-  color: #666;
+  color: var(--text-2);
   font-weight: 600;
-}
-
-@media (prefers-color-scheme: dark) {
-  .setting-label {
-    color: #999;
-  }
 }
 
 .setting-value {
   font-size: 14px;
   font-weight: 600;
-  color: #000;
-}
-
-@media (prefers-color-scheme: dark) {
-  .setting-value {
-    color: #fff;
-  }
+  color: var(--text);
 }
 
 .recipe-tip-section {
   padding: 1rem;
-  background-color: #f0f0f0;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-@media (prefers-color-scheme: dark) {
-  .recipe-tip-section {
-    background-color: #0a0a0a;
-    border-color: rgba(255, 255, 255, 0.1);
-  }
+  background-color: var(--surface-lo);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
 
 .tip-title {
   font-size: 12px;
   font-weight: 600;
-  color: #666;
+  color: var(--text-2);
   margin-bottom: 0.5rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-@media (prefers-color-scheme: dark) {
-  .tip-title {
-    color: #999;
-  }
-}
-
 .tip-text {
   font-size: 14px;
   line-height: 1.6;
-  color: #000;
+  color: var(--text);
   margin: 0;
-}
-
-@media (prefers-color-scheme: dark) {
-  .tip-text {
-    color: #fff;
-  }
 }
 
 .recipe-footer {
@@ -550,9 +516,11 @@ body {
   gap: 8px;
 }
 
+/* ─── Buttons ─────────────────────────────────────────────────────────────── */
+
 .button {
   padding: 12px 16px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-med);
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
@@ -565,17 +533,9 @@ body {
 }
 
 .button-primary {
-  background-color: #000;
-  color: #fff;
-  border-color: #000;
-}
-
-@media (prefers-color-scheme: dark) {
-  .button-primary {
-    background-color: #fff;
-    color: #000;
-    border-color: #fff;
-  }
+  background-color: var(--accent);
+  color: var(--on-accent);
+  border-color: var(--accent);
 }
 
 .button-primary:active {
@@ -583,28 +543,16 @@ body {
 }
 
 .button-secondary {
-  background-color: #fff;
-  color: #000;
-  border-color: rgba(0, 0, 0, 0.2);
-}
-
-@media (prefers-color-scheme: dark) {
-  .button-secondary {
-    background-color: #1a1a1a;
-    color: #fff;
-    border-color: rgba(255, 255, 255, 0.2);
-  }
+  background-color: var(--input-bg);
+  color: var(--text);
+  border-color: var(--border-med);
 }
 
 .button-secondary:active {
-  background-color: #f0f0f0;
+  background-color: var(--surface-lo);
 }
 
-@media (prefers-color-scheme: dark) {
-  .button-secondary:active {
-    background-color: #0a0a0a;
-  }
-}
+/* ─── History ─────────────────────────────────────────────────────────────── */
 
 .history-list {
   display: grid;
@@ -614,47 +562,30 @@ body {
 
 .history-item {
   padding: 1rem;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border);
   border-radius: 8px;
-  background-color: #f9f9f9;
+  background-color: var(--surface);
   cursor: pointer;
   transition: all 0.2s;
 }
 
-@media (prefers-color-scheme: dark) {
-  .history-item {
-    background-color: #1a1a1a;
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-}
-
 .history-item:active {
-  background-color: #e9e9e9;
-}
-
-@media (prefers-color-scheme: dark) {
-  .history-item:active {
-    background-color: #0a0a0a;
-  }
+  background-color: var(--surface-press);
 }
 
 .history-recipe-name {
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 0.25rem;
-  color: #000;
-}
-
-@media (prefers-color-scheme: dark) {
-  .history-recipe-name {
-    color: #fff;
-  }
+  color: var(--text);
 }
 
 .history-metadata {
   font-size: 12px;
-  color: #999;
+  color: var(--text-3);
 }
+
+/* ─── Toast ───────────────────────────────────────────────────────────────── */
 
 .toast {
   position: fixed;
@@ -662,30 +593,12 @@ body {
   left: 1rem;
   right: 1rem;
   padding: 12px 16px;
-  background-color: #000;
-  color: #fff;
+  background-color: var(--accent);
+  color: var(--on-accent);
   border-radius: 8px;
   font-size: 14px;
   z-index: 1000;
   animation: slideUp 0.3s ease-out;
-}
-
-@media (prefers-color-scheme: dark) {
-  .toast {
-    background-color: #fff;
-    color: #000;
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(1rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .toast.hidden {
@@ -696,18 +609,32 @@ body {
   display: none !important;
 }
 
-@media (prefers-color-scheme: reduce-motion) {
+/* ─── Animations ──────────────────────────────────────────────────────────── */
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(1rem); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0s !important;
     transition-duration: 0s !important;
   }
 }
 
+/* ─── iOS safe area ───────────────────────────────────────────────────────── */
+
 @supports (padding: max(0px)) {
   .app-header {
     padding-top: max(1.5rem, env(safe-area-inset-top));
     padding-left: max(1rem, env(safe-area-inset-left));
     padding-right: max(1rem, env(safe-area-inset-right));
+  }
+
+  .theme-control {
+    top: max(1rem, env(safe-area-inset-top));
+    right: max(1rem, env(safe-area-inset-right));
   }
 
   .app-main {

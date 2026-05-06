@@ -78,16 +78,29 @@ class UIManager {
     const saved = appStorage.getSelectedCamera();
     if (saved) {
       document.getElementById('camera-select').value = saved;
+      this.filterRecipeButtons(saved);
     }
   }
 
   onCameraChanged(cameraKey) {
+    this.filterRecipeButtons(cameraKey);
     this.populateComparisonDropdowns();
     [1, 2, 3, 4].forEach(i => {
       document.getElementById(`compare-${i}`).value = '';
     });
     document.getElementById('compare-table-container').innerHTML =
       '<p class="placeholder-text">Select two or more recipes to compare</p>';
+  }
+
+  filterRecipeButtons(camera) {
+    document.querySelectorAll('[data-recipe]').forEach(btn => {
+      const recipe = getRecipeByKey(btn.dataset.recipe);
+      btn.classList.toggle('hidden', !!(camera && recipe && !recipe.compatibility.includes(camera)));
+    });
+    document.querySelectorAll('[data-film]').forEach(btn => {
+      const recipe = getRecipeByKey(btn.dataset.film);
+      btn.classList.toggle('hidden', !!(camera && recipe && !recipe.compatibility.includes(camera)));
+    });
   }
 
   populateComparisonDropdowns() {
@@ -168,24 +181,25 @@ class UIManager {
       return;
     }
 
-    const camera = document.getElementById('camera-select').value;
-    const cameraName = document.getElementById('camera-select').options[document.getElementById('camera-select').selectedIndex].text;
-
     appStorage.addToHistory(recipeKey, 'view');
 
     this.currentRecipe = { ...recipe, key: recipeKey };
-    this.displayRecipeCard(recipe, camera, cameraName, source);
+    this.displayRecipeCard(recipe, source);
 
     setTimeout(() => {
       document.getElementById('recipe-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
   }
 
-  displayRecipeCard(recipe, cameraKey, cameraName, source) {
+  displayRecipeCard(recipe, source) {
     const card = document.getElementById('recipe-card');
 
+    const compatibleCameras = recipe.compatibility
+      .map(key => CAMERA_INFO[key]?.name.split(' (')[0] || key)
+      .join(' · ');
+
     document.getElementById('recipe-title').textContent = recipe.title;
-    document.getElementById('recipe-camera').textContent = cameraName;
+    document.getElementById('recipe-camera').textContent = compatibleCameras;
 
     let styleLabel = recipe.style;
     if (source === 'preset') {
@@ -216,10 +230,12 @@ class UIManager {
     }
 
     const recipe = this.currentRecipe;
-    const camera = document.getElementById('camera-select').options[document.getElementById('camera-select').selectedIndex].text;
+    const compatibleCameras = recipe.compatibility
+      .map(key => CAMERA_INFO[key]?.name.split(' (')[0] || key)
+      .join(', ');
 
     const text = `${recipe.title}
-Camera: ${camera}
+Compatible with: ${compatibleCameras}
 
 Film Simulation: ${recipe.film}
 Dynamic Range: ${recipe.dr}

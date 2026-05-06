@@ -9,6 +9,7 @@ class RecipeLabApp {
     console.log('Initializing Recipe Lab...');
 
     permissionsManager.init();
+    themeManager.init();
     appUI.init();
     comparisonManager.init();
 
