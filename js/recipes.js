@@ -94,6 +94,38 @@ const PRESET_RECIPES = {
     tip: "Photojournalism character. Extended dynamic range and aggressive grain. Grips shadows without losing highlights. Desaturated color adds authenticity.",
     compatibility: ["x-trans-3", "x-trans-4", "x-trans-5"],
     tags: ["documentary", "grain", "desaturated", "extended-range"]
+  },
+  "m6-sunny": {
+    title: "M6 Sunny 16",
+    style: "Preset recipe",
+    film: "Velvia",
+    dr: "DR200",
+    wb: "R: 0, B: -1",
+    high: "-1",
+    shad: "+1",
+    color: "+3",
+    sharp: "+2",
+    nr: "-4",
+    grain: "None",
+    tip: "Inspired by the classic M6 + Velvia 50 pairing favoured by travel photographers. Bold, saturated colour with punchy contrast. Made for bright outdoor light.",
+    compatibility: ["x-trans-2", "x-trans-3", "x-trans-4", "x-trans-5"],
+    tags: ["travel", "landscape", "saturated", "outdoor"]
+  },
+  "mono-classic": {
+    title: "M Monochrome (Classic)",
+    style: "Preset recipe",
+    film: "Monochrome (Std)",
+    dr: "DR200",
+    wb: "N/A",
+    high: "0",
+    shad: "+3",
+    color: "N/A",
+    sharp: "+2",
+    nr: "-4",
+    grain: "None",
+    tip: "A BW look accessible on every X-Trans generation. Punchy shadows with clean mid-tones — strong for street and documentary work without relying on Acros.",
+    compatibility: ["x-trans-2", "x-trans-3", "x-trans-4", "x-trans-5"],
+    tags: ["black-and-white", "street", "documentary", "classic"]
   }
 };
 
@@ -193,6 +225,70 @@ const FILM_MATCH_RECIPES = {
     tip: "Portra 160 NC's warm, neutral-to-cool palette. Extended DR400 for exposure latitude. Clean, professional rendering.",
     compatibility: ["x-trans-3", "x-trans-4", "x-trans-5"],
     tags: ["portrait", "skin-tones", "exposure-latitude", "professional"]
+  },
+  "velvia-50": {
+    title: "Velvia 50 Match",
+    style: "Film emulation: Velvia 50",
+    film: "Velvia",
+    dr: "DR200",
+    wb: "R: 0, B: -2",
+    high: "-2",
+    shad: "+1",
+    color: "+4",
+    sharp: "+2",
+    nr: "-4",
+    grain: "None",
+    tip: "The iconic slide film. Extreme saturation and punchy contrast made for bright daylight — landscapes, flora, and travel. Handle highlights carefully.",
+    compatibility: ["x-trans-2", "x-trans-3", "x-trans-4", "x-trans-5"],
+    tags: ["landscape", "saturated", "slide-film", "travel"]
+  },
+  "superia-400": {
+    title: "Superia 400 Match",
+    style: "Film emulation: Fujicolor Superia 400",
+    film: "PRO Neg. Hi",
+    dr: "DR200",
+    wb: "R: +1, B: 0",
+    high: "0",
+    shad: "+2",
+    color: "+1",
+    sharp: "+1",
+    nr: "-3",
+    grain: "None",
+    tip: "The everyday colour neg. Slightly warm, honest rendering with natural contrast. Great for street, travel, and casual shooting — the anti-recipe recipe.",
+    compatibility: ["x-trans-2", "x-trans-3", "x-trans-4", "x-trans-5"],
+    tags: ["everyday", "street", "warm", "natural"]
+  },
+  "pro-400h": {
+    title: "Pro 400H Match",
+    style: "Film emulation: Fujicolor Pro 400H",
+    film: "Astia",
+    dr: "DR400",
+    wb: "R: +2, B: +1",
+    high: "-2",
+    shad: "0",
+    color: "-1",
+    sharp: "0",
+    nr: "-3",
+    grain: "Weak",
+    tip: "Pastel palette and flattering skin tones. Loved for portraits and weddings. Extended DR400 handles bright skies. The WB shift lifts shadows toward a cool-magenta cast.",
+    compatibility: ["x-trans-3", "x-trans-4", "x-trans-5"],
+    tags: ["portrait", "wedding", "pastel", "skin-tones"]
+  },
+  "delta-3200": {
+    title: "Delta 3200 Match",
+    style: "Film emulation: Ilford Delta 3200",
+    film: "Acros (Std)",
+    dr: "DR400",
+    wb: "N/A",
+    high: "-1",
+    shad: "+4",
+    color: "N/A",
+    sharp: "+3",
+    nr: "-4",
+    grain: "Strong",
+    tip: "Pushed high-ISO grain texture. Acros with strong grain approximates Delta 3200's chunky, energetic structure. Built for low light, night, and gritty interiors.",
+    compatibility: ["x-trans-3", "x-trans-4", "x-trans-5"],
+    tags: ["black-and-white", "grain", "low-light", "night"]
   }
 };
 
