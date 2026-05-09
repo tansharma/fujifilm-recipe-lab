@@ -247,14 +247,14 @@ ${recipe.tip}
 
 Pro Tip: Set Exposure Compensation to -0.3 or -0.7 to protect highlights and deepen blacks.`;
 
-    navigator.clipboard.writeText(text)
+    this._copyText(text)
       .then(() => {
         navigator.vibrate?.(10);
         appStorage.addToHistory(recipe.key, 'export');
         this.showToast('Recipe copied to clipboard');
       })
-      .catch(err => {
-        this.showToast('Failed to copy: ' + err.message);
+      .catch(() => {
+        this.showToast('Failed to copy settings');
       });
   }
 
@@ -264,19 +264,49 @@ Pro Tip: Set Exposure Compensation to -0.3 or -0.7 to protect highlights and dee
     const recipe = this.currentRecipe;
     const url = `${location.origin}${location.pathname}#recipe/${recipe.key}`;
 
-    if (navigator.share) {
-      navigator.share({ title: recipe.title, url })
-        .catch(err => {
-          if (err.name !== 'AbortError') this.showToast('Unable to share');
-        });
-    } else {
-      navigator.clipboard.writeText(url)
+    const copyUrlFallback = () => {
+      this._copyText(url)
         .then(() => {
           navigator.vibrate?.(10);
           this.showToast('Link copied to clipboard');
         })
         .catch(() => this.showToast('Unable to copy link'));
+    };
+
+    if (navigator.share) {
+      navigator.share({ title: recipe.title, url })
+        .catch(err => {
+          // AbortError = user dismissed the sheet — silent.
+          // Any other error (e.g. iOS rejecting http:// URLs) → clipboard fallback.
+          if (err.name !== 'AbortError') copyUrlFallback();
+        });
+    } else {
+      copyUrlFallback();
     }
+  }
+
+  async _copyText(text) {
+    if (navigator.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return;
+      } catch {
+        // clipboard API failed — fall through to execCommand
+      }
+    }
+    await this._execCopy(text);
+  }
+
+  async _execCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none;';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    if (!ok) throw new Error('execCommand failed');
   }
 
   populateHistory() {
