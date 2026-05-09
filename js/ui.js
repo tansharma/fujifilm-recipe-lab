@@ -12,6 +12,7 @@ class UIManager {
     this.populateComparisonDropdowns();
     this._setupPreviewUI();
     this._setupInstallNudge();
+    this._setupTweakForm();
   }
 
   indexRecipeButtons() {
@@ -88,6 +89,8 @@ class UIManager {
 
     if (mode === 'history') {
       this.populateHistory();
+    } else if (mode === 'variations') {
+      this.populateVariations();
     }
   }
 
@@ -111,6 +114,9 @@ class UIManager {
       this.applyCompatibilityFilter(this.currentRecipe, cameraKey);
       this.updateDRNote(this.currentRecipe, cameraKey);
       this.applyFallbackHints(this.currentRecipe, cameraKey);
+    }
+    if (this.currentMode === 'variations') {
+      this.populateVariations();
     }
   }
 
@@ -240,8 +246,11 @@ class UIManager {
       styleLabel = 'Leica reference library';
     } else if (source === 'film') {
       styleLabel = 'Film stock match';
+    } else if (source === 'variation') {
+      styleLabel = 'My variation';
     }
     document.getElementById('recipe-style').textContent = styleLabel;
+    document.getElementById('tweak-form').classList.add('hidden');
 
     document.getElementById('recipe-film').textContent = recipe.film;
     document.getElementById('recipe-dr').textContent = recipe.dr;
@@ -530,13 +539,24 @@ Pro Tip: Set Exposure Compensation to -0.3 or -0.7 to protect highlights and dee
       return;
     }
 
-    historyDiv.innerHTML = recent
-      .map(recipeKey => {
-        const recipe = getRecipeByKey(recipeKey);
-        if (!recipe) return '';
+    const variations = appStorage.getVariations();
 
+    historyDiv.innerHTML = recent
+      .map(key => {
+        if (key.startsWith('var__')) {
+          const v = variations.find(v => v.id === key);
+          if (!v) return '';
+          return `
+            <button class="history-item" onclick="appUI.loadVariation('${key}')">
+              <div class="history-recipe-name">${v.name}</div>
+              <div class="history-metadata">My variation</div>
+            </button>
+          `;
+        }
+        const recipe = getRecipeByKey(key);
+        if (!recipe) return '';
         return `
-          <button class="history-item" onclick="appUI.loadRecipe('${recipeKey}', '${recipe.style.includes('Film') ? 'film' : 'preset'}')">
+          <button class="history-item" onclick="appUI.loadRecipe('${key}', '${recipe.style.includes('Film') ? 'film' : 'preset'}')">
             <div class="history-recipe-name">${recipe.title}</div>
             <div class="history-metadata">${recipe.style}</div>
           </button>
@@ -559,6 +579,204 @@ Pro Tip: Set Exposure Compensation to -0.3 or -0.7 to protect highlights and dee
     this.restoreCameraSelection();
     this.populateComparisonDropdowns();
     this.populateHistory();
+  }
+
+  loadVariation(id) {
+    const variation = appStorage.getVariations().find(v => v.id === id);
+    if (!variation) {
+      this.showToast('Variation not found');
+      return;
+    }
+    const recipe = { ...variation.data, key: id };
+    appStorage.addToHistory(id, 'view');
+    this.currentRecipe = recipe;
+    this.displayRecipeCard(recipe, 'variation');
+    setTimeout(() => {
+      document.getElementById('recipe-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  }
+
+  populateVariations() {
+    const container = document.getElementById('variations-content');
+    const variations = appStorage.getVariations();
+
+    if (variations.length === 0) {
+      container.innerHTML = '<p class="placeholder-text">No variations saved yet. Open a recipe and tap Tweak.</p>';
+      return;
+    }
+
+    const camera = document.getElementById('camera-select').value;
+    const sorted = [...variations].sort((a, b) => b.createdAt - a.createdAt);
+
+    const compatible = sorted.filter(v => !camera || v.data.compatibility.includes(camera));
+    const incompatible = sorted.filter(v => camera && !v.data.compatibility.includes(camera));
+
+    container.innerHTML = '';
+
+    compatible.forEach(v => container.appendChild(this._makeVariationButton(v, false)));
+
+    if (incompatible.length > 0 && compatible.length > 0) {
+      const divider = document.createElement('div');
+      divider.className = 'extended-library-divider';
+      divider.textContent = 'incompatible with selected camera';
+      divider.setAttribute('aria-hidden', 'true');
+      container.appendChild(divider);
+    }
+
+    incompatible.forEach(v => container.appendChild(this._makeVariationButton(v, true)));
+  }
+
+  _makeVariationButton(variation, dimmed) {
+    const btn = document.createElement('button');
+    btn.className = 'recipe-button variation-button' + (dimmed ? ' extended-library' : '');
+    btn.dataset.variationId = variation.id;
+
+    const label = document.createElement('span');
+    label.className = 'variation-button-label';
+    label.textContent = variation.name;
+    btn.appendChild(label);
+
+    const del = document.createElement('button');
+    del.className = 'variation-delete';
+    del.setAttribute('aria-label', `Delete ${variation.name}`);
+    del.textContent = '×';
+    del.addEventListener('click', e => {
+      e.stopPropagation();
+      appStorage.deleteVariation(variation.id);
+      this.populateVariations();
+      this.showToast('Variation deleted');
+    });
+    btn.appendChild(del);
+
+    btn.addEventListener('click', () => {
+      if (!document.getElementById('camera-select').value) {
+        this.showToast('Please select a camera first');
+        return;
+      }
+      this.loadVariation(variation.id);
+    });
+
+    return btn;
+  }
+
+  _setupTweakForm() {
+    // Populate discrete -4..+4 selects once at init
+    ['tweak-high', 'tweak-shad', 'tweak-color', 'tweak-sharp', 'tweak-nr'].forEach(id => {
+      const sel = document.getElementById(id);
+      for (let v = -4; v <= 4; v++) {
+        const opt = document.createElement('option');
+        opt.value = v >= 0 ? `+${v}` : `${v}`;
+        opt.textContent = opt.value;
+        sel.appendChild(opt);
+      }
+    });
+
+    document.getElementById('tweak-button').addEventListener('click', () => {
+      if (!this.currentRecipe) return;
+      const form = document.getElementById('tweak-form');
+      if (!form.classList.contains('hidden')) {
+        form.classList.add('hidden');
+        return;
+      }
+      this._openTweakForm(this.currentRecipe);
+    });
+
+    document.getElementById('tweak-cancel').addEventListener('click', () => {
+      document.getElementById('tweak-form').classList.add('hidden');
+    });
+
+    document.getElementById('tweak-save').addEventListener('click', () => {
+      this._saveTweakForm();
+    });
+  }
+
+  _openTweakForm(recipe) {
+    let wbR = 0, wbB = 0;
+    if (recipe.wb !== 'N/A') {
+      const rMatch = recipe.wb.match(/R:\s*([+-]?\d+)/);
+      const bMatch = recipe.wb.match(/B:\s*([+-]?\d+)/);
+      wbR = rMatch ? parseInt(rMatch[1]) : 0;
+      wbB = bMatch ? parseInt(bMatch[1]) : 0;
+    }
+
+    const isBW = recipe.film.includes('Acros') || recipe.film.startsWith('Monochrome');
+    const isWBNA = recipe.wb === 'N/A';
+
+    document.getElementById('tweak-name').value = '';
+    document.getElementById('tweak-name').placeholder = `${recipe.title} (my edit)`;
+    document.getElementById('tweak-dr').value = recipe.dr;
+    document.getElementById('tweak-grain').value = recipe.grain;
+
+    const wbRInput = document.getElementById('tweak-wb-r');
+    const wbBInput = document.getElementById('tweak-wb-b');
+    wbRInput.value = wbR;
+    wbBInput.value = wbB;
+    wbRInput.disabled = isWBNA;
+    wbBInput.disabled = isWBNA;
+
+    const fmtVal = v => (parseInt(v) >= 0 ? `+${parseInt(v)}` : `${parseInt(v)}`);
+    document.getElementById('tweak-high').value = fmtVal(recipe.high);
+    document.getElementById('tweak-shad').value = fmtVal(recipe.shad);
+    document.getElementById('tweak-sharp').value = fmtVal(recipe.sharp);
+    document.getElementById('tweak-nr').value = fmtVal(recipe.nr);
+
+    const colorSel = document.getElementById('tweak-color');
+    colorSel.value = (isBW || recipe.color === 'N/A') ? '+0' : fmtVal(recipe.color);
+    colorSel.disabled = isBW || recipe.color === 'N/A';
+
+    document.getElementById('tweak-form').classList.remove('hidden');
+    document.getElementById('tweak-name').focus();
+  }
+
+  _saveTweakForm() {
+    const name = document.getElementById('tweak-name').value.trim();
+    if (!name) {
+      document.getElementById('tweak-name').focus();
+      this.showToast('Give your variation a name');
+      return;
+    }
+
+    const recipe = this.currentRecipe;
+    const isBW = recipe.film.includes('Acros') || recipe.film.startsWith('Monochrome');
+    const isWBNA = recipe.wb === 'N/A';
+
+    const wbR = parseInt(document.getElementById('tweak-wb-r').value) || 0;
+    const wbB = parseInt(document.getElementById('tweak-wb-b').value) || 0;
+    const fmtWB = n => (n >= 0 ? `+${n}` : `${n}`);
+    const wb = isWBNA ? 'N/A' : `R: ${fmtWB(wbR)}, B: ${fmtWB(wbB)}`;
+
+    const id = `var__${Date.now()}`;
+    const parentKey = recipe.isVariation ? recipe.parentKey : recipe.key;
+
+    appStorage.saveVariation({
+      id,
+      parentKey,
+      name,
+      createdAt: Date.now(),
+      data: {
+        title: name,
+        style: 'My variation',
+        film: recipe.film,
+        dr: document.getElementById('tweak-dr').value,
+        wb,
+        high: document.getElementById('tweak-high').value,
+        shad: document.getElementById('tweak-shad').value,
+        color: (isBW || recipe.color === 'N/A') ? 'N/A' : document.getElementById('tweak-color').value,
+        sharp: document.getElementById('tweak-sharp').value,
+        nr: document.getElementById('tweak-nr').value,
+        grain: document.getElementById('tweak-grain').value,
+        chrome_blue: recipe.chrome_blue,
+        tip: `Tweaked from: ${recipe.title}`,
+        compatibility: recipe.compatibility,
+        tags: ['variation'],
+        isVariation: true,
+        parentKey
+      }
+    });
+
+    document.getElementById('tweak-form').classList.add('hidden');
+    navigator.vibrate?.(10);
+    this.showToast(`"${name}" saved to My Variations`);
   }
 
   _setupInstallNudge() {

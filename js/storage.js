@@ -1,7 +1,8 @@
 const STORAGE_KEYS = {
   SELECTED_CAMERA: 'recipe_lab_selected_camera',
   USER_HISTORY: 'recipe_lab_user_history',
-  RECENTLY_USED: 'recipe_lab_recently_used'
+  RECENTLY_USED: 'recipe_lab_recently_used',
+  VARIATIONS: 'recipe_lab_variations'
 };
 
 class Storage {
@@ -87,6 +88,30 @@ class Storage {
     return recent;
   }
 
+  getVariations() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEYS.VARIATIONS)) || [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  saveVariation(variation) {
+    const all = this.getVariations();
+    const idx = all.findIndex(v => v.id === variation.id);
+    if (idx >= 0) {
+      all[idx] = variation;
+    } else {
+      all.push(variation);
+    }
+    localStorage.setItem(STORAGE_KEYS.VARIATIONS, JSON.stringify(all));
+  }
+
+  deleteVariation(id) {
+    const remaining = this.getVariations().filter(v => v.id !== id);
+    localStorage.setItem(STORAGE_KEYS.VARIATIONS, JSON.stringify(remaining));
+  }
+
   clearHistory() {
     localStorage.removeItem(STORAGE_KEYS.USER_HISTORY);
   }
@@ -95,6 +120,7 @@ class Storage {
     localStorage.removeItem(STORAGE_KEYS.SELECTED_CAMERA);
     localStorage.removeItem(STORAGE_KEYS.USER_HISTORY);
     localStorage.removeItem(STORAGE_KEYS.RECENTLY_USED);
+    localStorage.removeItem(STORAGE_KEYS.VARIATIONS);
   }
 
   debugLogState() {

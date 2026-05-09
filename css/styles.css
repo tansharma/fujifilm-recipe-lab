@@ -810,6 +810,112 @@ body {
   background-color: var(--surface-lo);
 }
 
+/* ─── Tweak form ──────────────────────────────────────────────────────────── */
+
+.tweak-form {
+  padding: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.tweak-form-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.75rem;
+}
+
+.tweak-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+}
+
+.tweak-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tweak-field-full {
+  grid-column: 1 / -1;
+}
+
+.tweak-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.tweak-input,
+.tweak-select {
+  padding: 8px 10px;
+  border: 1px solid var(--border-med);
+  border-radius: 6px;
+  background-color: var(--input-bg);
+  color: var(--text);
+  font-size: 14px;
+  -webkit-appearance: none;
+  appearance: none;
+  min-height: 38px;
+}
+
+.tweak-input:disabled,
+.tweak-select:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.tweak-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.tweak-actions .button {
+  flex: 1;
+}
+
+/* ─── Variation buttons ───────────────────────────────────────────────────── */
+
+.variation-button {
+  position: relative;
+  padding-right: 32px;
+}
+
+.variation-button-label {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.variation-delete {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 50%;
+  background: var(--surface-lo);
+  color: var(--text-3);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+
+.variation-delete:active {
+  background: var(--border-med);
+  color: var(--text);
+}
+
 /* ─── History ─────────────────────────────────────────────────────────────── */
 
 .history-list {
