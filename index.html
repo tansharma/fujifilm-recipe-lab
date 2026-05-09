@@ -93,6 +93,7 @@
         <button class="tab-button" data-mode="film" role="tab" aria-selected="false">Film matcher</button>
         <button class="tab-button" data-mode="compare" role="tab" aria-selected="false">Compare</button>
         <button class="tab-button" data-mode="history" role="tab" aria-selected="false">History</button>
+        <button class="tab-button" data-mode="variations" role="tab" aria-selected="false">My Variations</button>
       </nav>
 
       <!-- Presets Tab -->
@@ -182,6 +183,13 @@
       <section id="history-tab" class="tab-content" role="tabpanel">
         <div id="history-content" class="history-list">
           <p class="placeholder-text">No recipes viewed yet</p>
+        </div>
+      </section>
+
+      <!-- My Variations Tab -->
+      <section id="variations-tab" class="tab-content" role="tabpanel">
+        <div id="variations-content" class="recipe-grid">
+          <p class="placeholder-text">No variations saved yet. Open a recipe and tap Tweak.</p>
         </div>
       </section>
 
@@ -285,8 +293,67 @@
           <p id="recipe-tip" class="tip-text">—</p>
         </div>
 
+        <div id="tweak-form" class="tweak-form hidden">
+          <h3 class="tweak-form-title">Save as Variation</h3>
+          <div class="tweak-fields">
+            <div class="tweak-field tweak-field-full">
+              <label for="tweak-name" class="tweak-label">Variation name</label>
+              <input type="text" id="tweak-name" class="tweak-input" placeholder="e.g. Warmer WB" maxlength="40" autocomplete="off">
+            </div>
+            <div class="tweak-field">
+              <label for="tweak-dr" class="tweak-label">Dynamic Range</label>
+              <select id="tweak-dr" class="tweak-select">
+                <option>DR100</option>
+                <option>DR200</option>
+                <option>DR400</option>
+              </select>
+            </div>
+            <div class="tweak-field">
+              <label for="tweak-grain" class="tweak-label">Grain</label>
+              <select id="tweak-grain" class="tweak-select">
+                <option>None</option>
+                <option>Weak</option>
+                <option>Strong</option>
+              </select>
+            </div>
+            <div class="tweak-field">
+              <label for="tweak-wb-r" class="tweak-label">WB Shift R</label>
+              <input type="number" id="tweak-wb-r" class="tweak-input" min="-9" max="9" step="1">
+            </div>
+            <div class="tweak-field">
+              <label for="tweak-wb-b" class="tweak-label">WB Shift B</label>
+              <input type="number" id="tweak-wb-b" class="tweak-input" min="-9" max="9" step="1">
+            </div>
+            <div class="tweak-field">
+              <label for="tweak-high" class="tweak-label">Highlights</label>
+              <select id="tweak-high" class="tweak-select"></select>
+            </div>
+            <div class="tweak-field">
+              <label for="tweak-shad" class="tweak-label">Shadows</label>
+              <select id="tweak-shad" class="tweak-select"></select>
+            </div>
+            <div class="tweak-field">
+              <label for="tweak-color" class="tweak-label">Color</label>
+              <select id="tweak-color" class="tweak-select"></select>
+            </div>
+            <div class="tweak-field">
+              <label for="tweak-sharp" class="tweak-label">Sharpness</label>
+              <select id="tweak-sharp" class="tweak-select"></select>
+            </div>
+            <div class="tweak-field tweak-field-full">
+              <label for="tweak-nr" class="tweak-label">Noise Reduction</label>
+              <select id="tweak-nr" class="tweak-select"></select>
+            </div>
+          </div>
+          <div class="tweak-actions">
+            <button id="tweak-save" class="button button-primary">Save Variation</button>
+            <button id="tweak-cancel" class="button button-secondary">Cancel</button>
+          </div>
+        </div>
+
         <div class="recipe-footer">
           <button id="copy-button" class="button button-primary">Copy settings</button>
+          <button id="tweak-button" class="button button-secondary">Tweak</button>
           <button id="share-button" class="button button-secondary button-icon" aria-label="Share recipe">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
