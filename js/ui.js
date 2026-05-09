@@ -173,6 +173,7 @@ class UIManager {
     document.getElementById('recipe-sharp').textContent = recipe.sharp;
     document.getElementById('recipe-nr').textContent = recipe.nr;
     document.getElementById('recipe-grain').textContent = recipe.grain;
+    document.getElementById('recipe-chrome-blue').textContent = recipe.chrome_blue;
     document.getElementById('recipe-tip').textContent = recipe.tip;
 
     const camera = document.getElementById('camera-select').value;
@@ -207,6 +208,9 @@ class UIManager {
         document.getElementById('recipe-shad').closest('.setting-pair').classList.add('incompatible');
       }
     }
+    if (limitations.noColorChromeBlue && recipe.chrome_blue !== 'Off') {
+      document.getElementById('recipe-chrome-blue').closest('.setting-pair').classList.add('incompatible');
+    }
   }
 
   copyRecipeToClipboard() {
@@ -232,6 +236,7 @@ Color: ${recipe.color}
 Sharpness: ${recipe.sharp}
 Noise Reduction: ${recipe.nr}
 Grain Effect: ${recipe.grain}
+Color Chrome FX Blue: ${recipe.chrome_blue}
 
 Usage & Guidance:
 ${recipe.tip}

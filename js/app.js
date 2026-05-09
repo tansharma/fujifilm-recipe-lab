@@ -73,7 +73,8 @@ class RecipeLabApp {
         color: recipe.color,
         sharpness: recipe.sharp,
         noiseReduction: recipe.nr,
-        grainEffect: recipe.grain
+        grainEffect: recipe.grain,
+        colorChromeFXBlue: recipe.chrome_blue
       },
       usage: recipe.tip,
       proTip: 'Set Exposure Compensation to -0.3 or -0.7 to protect highlights and deepen blacks.'
