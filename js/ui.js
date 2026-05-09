@@ -55,6 +55,10 @@ class UIManager {
     document.getElementById('copy-button').addEventListener('click', () => {
       this.copyRecipeToClipboard();
     });
+
+    document.getElementById('share-button').addEventListener('click', () => {
+      this.shareRecipe();
+    });
   }
 
   switchTab(mode) {
@@ -173,6 +177,7 @@ class UIManager {
     document.getElementById('recipe-sharp').textContent = recipe.sharp;
     document.getElementById('recipe-nr').textContent = recipe.nr;
     document.getElementById('recipe-grain').textContent = recipe.grain;
+    document.getElementById('recipe-chrome-blue').textContent = recipe.chrome_blue;
     document.getElementById('recipe-tip').textContent = recipe.tip;
 
     const camera = document.getElementById('camera-select').value;
@@ -207,6 +212,9 @@ class UIManager {
         document.getElementById('recipe-shad').closest('.setting-pair').classList.add('incompatible');
       }
     }
+    if (limitations.noColorChromeBlue && recipe.chrome_blue !== 'Off') {
+      document.getElementById('recipe-chrome-blue').closest('.setting-pair').classList.add('incompatible');
+    }
   }
 
   copyRecipeToClipboard() {
@@ -232,20 +240,73 @@ Color: ${recipe.color}
 Sharpness: ${recipe.sharp}
 Noise Reduction: ${recipe.nr}
 Grain Effect: ${recipe.grain}
+Color Chrome FX Blue: ${recipe.chrome_blue}
 
 Usage & Guidance:
 ${recipe.tip}
 
 Pro Tip: Set Exposure Compensation to -0.3 or -0.7 to protect highlights and deepen blacks.`;
 
-    navigator.clipboard.writeText(text)
+    this._copyText(text)
       .then(() => {
+        navigator.vibrate?.(10);
         appStorage.addToHistory(recipe.key, 'export');
         this.showToast('Recipe copied to clipboard');
       })
-      .catch(err => {
-        this.showToast('Failed to copy: ' + err.message);
+      .catch(() => {
+        this.showToast('Failed to copy settings');
       });
+  }
+
+  shareRecipe() {
+    if (!this.currentRecipe) return;
+
+    const recipe = this.currentRecipe;
+    const url = `${location.origin}${location.pathname}#recipe/${recipe.key}`;
+
+    const copyUrlFallback = () => {
+      this._copyText(url)
+        .then(() => {
+          navigator.vibrate?.(10);
+          this.showToast('Link copied to clipboard');
+        })
+        .catch(() => this.showToast('Unable to copy link'));
+    };
+
+    if (navigator.share) {
+      navigator.share({ title: recipe.title, url })
+        .catch(err => {
+          // AbortError = user dismissed the sheet — silent.
+          // Any other error (e.g. iOS rejecting http:// URLs) → clipboard fallback.
+          if (err.name !== 'AbortError') copyUrlFallback();
+        });
+    } else {
+      copyUrlFallback();
+    }
+  }
+
+  async _copyText(text) {
+    if (navigator.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return;
+      } catch {
+        // clipboard API failed — fall through to execCommand
+      }
+    }
+    await this._execCopy(text);
+  }
+
+  async _execCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none;';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    if (!ok) throw new Error('execCommand failed');
   }
 
   populateHistory() {

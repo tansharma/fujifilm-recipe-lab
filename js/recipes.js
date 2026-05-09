@@ -11,6 +11,7 @@ const PRESET_RECIPES = {
     sharp: "+1",
     nr: "-4",
     grain: "Weak",
+    chrome_blue: "Off",
     tip: "Perfect for London architecture. Deepens blacks in Victorian brickwork while maintaining detail in shadows. Use during golden hour for dramatic micro-contrast on textures.",
     compatibility: ["x-trans-3", "x-trans-4", "x-trans-5"],
     tags: ["high-contrast", "architecture", "warm", "moody"]
@@ -27,6 +28,7 @@ const PRESET_RECIPES = {
     sharp: "+2",
     nr: "-4",
     grain: "Strong",
+    chrome_blue: "Off",
     tip: "Street photography essential. The strong grain mimics classic Leica film. Ideal for high-contrast scenes with decisive moments.",
     compatibility: ["x-trans-3", "x-trans-4", "x-trans-5"],
     tags: ["black-and-white", "street", "high-contrast", "grain"]
@@ -43,6 +45,7 @@ const PRESET_RECIPES = {
     sharp: "+1",
     nr: "-4",
     grain: "None",
+    chrome_blue: "Weak",
     tip: "Night scene specialist. The cool WB shift enhances neon and tungsten mood. Extended DR200 recovers blown highlights.",
     compatibility: ["x-trans-2", "x-trans-3", "x-trans-4", "x-trans-5"],
     tags: ["night", "cool", "street", "extended-range"]
@@ -59,6 +62,7 @@ const PRESET_RECIPES = {
     sharp: "+2",
     nr: "-4",
     grain: "None",
+    chrome_blue: "Off",
     tip: "Timeless elegance for color work. Warm, natural rendition with just enough contrast. Perfect for environmental portraits and documentary work.",
     compatibility: ["x-trans-2", "x-trans-3", "x-trans-4", "x-trans-5"],
     tags: ["natural", "portrait", "warm", "documentary"]
@@ -75,6 +79,7 @@ const PRESET_RECIPES = {
     sharp: "-1",
     nr: "-4",
     grain: "Weak",
+    chrome_blue: "Off",
     tip: "Golden-age Leica aesthetic. The warm WB shift evokes 1970s character. Extended DR400 and muted saturation for vintage rendering.",
     compatibility: ["x-trans-3", "x-trans-4", "x-trans-5"],
     tags: ["vintage", "warm", "saturated", "extended-range"]
@@ -91,6 +96,7 @@ const PRESET_RECIPES = {
     sharp: "+1",
     nr: "-4",
     grain: "Strong",
+    chrome_blue: "Off",
     tip: "Photojournalism character. Extended dynamic range and aggressive grain. Grips shadows without losing highlights. Desaturated color adds authenticity.",
     compatibility: ["x-trans-3", "x-trans-4", "x-trans-5"],
     tags: ["documentary", "grain", "desaturated", "extended-range"]
@@ -107,6 +113,7 @@ const PRESET_RECIPES = {
     sharp: "+2",
     nr: "-4",
     grain: "None",
+    chrome_blue: "Off",
     tip: "Inspired by the classic M6 + Velvia 50 pairing favoured by travel photographers. Bold, saturated colour with punchy contrast. Made for bright outdoor light.",
     compatibility: ["x-trans-2", "x-trans-3", "x-trans-4", "x-trans-5"],
     tags: ["travel", "landscape", "saturated", "outdoor"]
@@ -123,6 +130,7 @@ const PRESET_RECIPES = {
     sharp: "+2",
     nr: "-4",
     grain: "None",
+    chrome_blue: "Off",
     tip: "A BW look accessible on every X-Trans generation. Punchy shadows with clean mid-tones — strong for street and documentary work without relying on Acros.",
     compatibility: ["x-trans-2", "x-trans-3", "x-trans-4", "x-trans-5"],
     tags: ["black-and-white", "street", "documentary", "classic"]
@@ -142,6 +150,7 @@ const FILM_MATCH_RECIPES = {
     sharp: "+1",
     nr: "-4",
     grain: "Weak",
+    chrome_blue: "Off",
     tip: "Portra 400's legendary skin tones and warm, saturated palette. Astia provides vibrant color science. WB shift mimics Portra's warmth.",
     compatibility: ["x-trans-3", "x-trans-4", "x-trans-5"],
     tags: ["portrait", "skin-tones", "warm", "saturated"]
@@ -158,6 +167,7 @@ const FILM_MATCH_RECIPES = {
     sharp: "+2",
     nr: "-3",
     grain: "None",
+    chrome_blue: "Off",
     tip: "Kodachrome's ultra-saturated, rich color and legendary longevity. Provia delivers the punch and clarity.",
     compatibility: ["x-trans-2", "x-trans-3", "x-trans-4", "x-trans-5"],
     tags: ["saturated", "vibrant", "cool", "vintage-film"]
@@ -174,6 +184,7 @@ const FILM_MATCH_RECIPES = {
     sharp: "+3",
     nr: "-4",
     grain: "Strong",
+    chrome_blue: "Off",
     tip: "Tri-X's iconic grain structure and punchy contrast. Acros with strong grain recreates the film's character perfectly.",
     compatibility: ["x-trans-3", "x-trans-4", "x-trans-5"],
     tags: ["black-and-white", "grain", "high-contrast", "classic-film"]
@@ -190,6 +201,7 @@ const FILM_MATCH_RECIPES = {
     sharp: "+2",
     nr: "-4",
     grain: "Weak",
+    chrome_blue: "Off",
     tip: "HP5's fine grain and pleasant tonality. Acros with weak grain delivers smooth gradation and balanced contrast.",
     compatibility: ["x-trans-3", "x-trans-4", "x-trans-5"],
     tags: ["black-and-white", "fine-grain", "balanced", "versatile"]
@@ -206,6 +218,7 @@ const FILM_MATCH_RECIPES = {
     sharp: "+2",
     nr: "-4",
     grain: "None",
+    chrome_blue: "Weak",
     tip: "Ektachrome's cool, saturated character and subtle blue cast. Provia delivers rich, contrasty slide film rendering.",
     compatibility: ["x-trans-2", "x-trans-3", "x-trans-4", "x-trans-5"],
     tags: ["saturated", "cool", "slide-film", "vibrant"]
@@ -222,6 +235,7 @@ const FILM_MATCH_RECIPES = {
     sharp: "+1",
     nr: "-3",
     grain: "None",
+    chrome_blue: "Off",
     tip: "Portra 160 NC's warm, neutral-to-cool palette. Extended DR400 for exposure latitude. Clean, professional rendering.",
     compatibility: ["x-trans-3", "x-trans-4", "x-trans-5"],
     tags: ["portrait", "skin-tones", "exposure-latitude", "professional"]
@@ -238,6 +252,7 @@ const FILM_MATCH_RECIPES = {
     sharp: "+2",
     nr: "-4",
     grain: "None",
+    chrome_blue: "Weak",
     tip: "The iconic slide film. Extreme saturation and punchy contrast made for bright daylight — landscapes, flora, and travel. Handle highlights carefully.",
     compatibility: ["x-trans-2", "x-trans-3", "x-trans-4", "x-trans-5"],
     tags: ["landscape", "saturated", "slide-film", "travel"]
@@ -254,6 +269,7 @@ const FILM_MATCH_RECIPES = {
     sharp: "+1",
     nr: "-3",
     grain: "None",
+    chrome_blue: "Off",
     tip: "The everyday colour neg. Slightly warm, honest rendering with natural contrast. Great for street, travel, and casual shooting — the anti-recipe recipe.",
     compatibility: ["x-trans-2", "x-trans-3", "x-trans-4", "x-trans-5"],
     tags: ["everyday", "street", "warm", "natural"]
@@ -270,6 +286,7 @@ const FILM_MATCH_RECIPES = {
     sharp: "0",
     nr: "-3",
     grain: "Weak",
+    chrome_blue: "Off",
     tip: "Pastel palette and flattering skin tones. Loved for portraits and weddings. Extended DR400 handles bright skies. The WB shift lifts shadows toward a cool-magenta cast.",
     compatibility: ["x-trans-3", "x-trans-4", "x-trans-5"],
     tags: ["portrait", "wedding", "pastel", "skin-tones"]
@@ -286,6 +303,7 @@ const FILM_MATCH_RECIPES = {
     sharp: "+3",
     nr: "-4",
     grain: "Strong",
+    chrome_blue: "Off",
     tip: "Pushed high-ISO grain texture. Acros with strong grain approximates Delta 3200's chunky, energetic structure. Built for low light, night, and gritty interiors.",
     compatibility: ["x-trans-3", "x-trans-4", "x-trans-5"],
     tags: ["black-and-white", "grain", "low-light", "night"]
@@ -304,6 +322,7 @@ const CAMERA_INFO = {
       noAcros: true,
       noGrainEffect: true,
       noClarity: true,
+      noColorChromeBlue: true,
       maxHighlight: 2,
       maxShadow: 2
     },
@@ -312,7 +331,8 @@ const CAMERA_INFO = {
   "x-trans-3": {
     name: "X-Trans III (X-T2, X-Pro2, X100F)",
     limitations: {
-      noColorChrome: true
+      noColorChrome: true,
+      noColorChromeBlue: true
     },
     warning: null
   },

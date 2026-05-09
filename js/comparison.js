@@ -27,6 +27,7 @@ class ComparisonManager {
       { label: 'Sharpness',       key: 'sharp' },
       { label: 'Noise Reduction', key: 'nr' },
       { label: 'Grain Effect',    key: 'grain' },
+      { label: 'Chrome FX Blue',  key: 'chrome_blue' },
     ];
 
     const headerCells = selected.map(r => `<th>${r.recipe.title}</th>`).join('');
