@@ -3,6 +3,7 @@ class UIManager {
     this.currentMode = 'presets';
     this.currentRecipe = null;
     this._previewObjectUrl = null;
+    this._activeAnnotationBadge = null;
   }
 
   init() {
@@ -13,6 +14,7 @@ class UIManager {
     this._setupPreviewUI();
     this._setupInstallNudge();
     this._setupTweakForm();
+    this._setupAnnotationPopover();
   }
 
   indexRecipeButtons() {
@@ -269,6 +271,7 @@ class UIManager {
     this.updateDRNote(recipe, camera);
     this.applyFallbackHints(recipe, camera);
     this._updatePreviewFilter(recipe);
+    this._applyAnnotations(recipe, camera);
 
     card.classList.remove('hidden');
   }
@@ -777,6 +780,117 @@ Pro Tip: Set Exposure Compensation to -0.3 or -0.7 to protect highlights and dee
     document.getElementById('tweak-form').classList.add('hidden');
     navigator.vibrate?.(10);
     this.showToast(`"${name}" saved to My Variations`);
+  }
+
+  _setupAnnotationPopover() {
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.annotation-badge')) {
+        this._hideAnnotationPopover();
+      }
+    });
+  }
+
+  _hideAnnotationPopover() {
+    document.getElementById('annotation-popover').classList.add('hidden');
+    this._activeAnnotationBadge = null;
+  }
+
+  _toggleAnnotationPopover(badge, text) {
+    const popover = document.getElementById('annotation-popover');
+    if (this._activeAnnotationBadge === badge && !popover.classList.contains('hidden')) {
+      this._hideAnnotationPopover();
+      return;
+    }
+    this._activeAnnotationBadge = badge;
+    document.getElementById('annotation-text').textContent = text;
+    const rect = badge.getBoundingClientRect();
+    const pw = 240;
+    let left = rect.left + rect.width / 2 - pw / 2;
+    left = Math.max(12, Math.min(left, window.innerWidth - pw - 12));
+    popover.style.top = `${rect.bottom + 6}px`;
+    popover.style.left = `${left}px`;
+    popover.style.width = `${pw}px`;
+    popover.classList.remove('hidden');
+  }
+
+  _getAnnotationText(recipe, settingKey, camera) {
+    const ann = recipe.annotations?.[settingKey];
+    if (!ann) return null;
+
+    if (!camera) return ann;
+
+    const limitations = CAMERA_INFO[camera]?.limitations ?? {};
+    const drMinISO = CAMERA_INFO[camera]?.drMinISO ?? {};
+
+    if (settingKey === 'film' && limitations.noAcros && recipe.film.includes('Acros')) {
+      return 'Acros not available on this sensor — try Monochrome (Std) for similar tonal intent';
+    }
+    if (settingKey === 'grain' && limitations.noGrainEffect && recipe.grain !== 'None') {
+      return 'Grain effect not available on this sensor — NR −4 preserves organic texture instead';
+    }
+    if (settingKey === 'chrome_blue' && limitations.noColorChromeBlue && recipe.chrome_blue !== 'Off') {
+      return 'Color Chrome FX Blue not available on this generation';
+    }
+    if (settingKey === 'shad' && limitations.maxShadow != null) {
+      const val = parseInt(recipe.shad, 10);
+      if (!isNaN(val) && Math.abs(val) > limitations.maxShadow) {
+        return `Use +${limitations.maxShadow} max on this sensor — same crushed-black intent, reduced range`;
+      }
+    }
+    if (settingKey === 'high' && limitations.maxHighlight != null) {
+      const val = parseInt(recipe.high, 10);
+      if (!isNaN(val) && Math.abs(val) > limitations.maxHighlight) {
+        return `Use ±${limitations.maxHighlight} max on this sensor`;
+      }
+    }
+    if (settingKey === 'dr' && drMinISO[recipe.dr]) {
+      return `${ann} · Requires ISO ${drMinISO[recipe.dr]}+`;
+    }
+
+    return ann;
+  }
+
+  _applyAnnotations(recipe, camera) {
+    document.querySelectorAll('#recipe-card .annotation-badge').forEach(b => b.remove());
+    this._hideAnnotationPopover();
+
+    const settingMap = {
+      film: 'recipe-film',
+      dr: 'recipe-dr',
+      wb: 'recipe-wb',
+      high: 'recipe-high',
+      shad: 'recipe-shad',
+      color: 'recipe-color',
+      sharp: 'recipe-sharp',
+      nr: 'recipe-nr',
+      grain: 'recipe-grain',
+      chrome_blue: 'recipe-chrome-blue'
+    };
+
+    Object.entries(settingMap).forEach(([key, id]) => {
+      const text = this._getAnnotationText(recipe, key, camera);
+      if (!text) return;
+
+      const valueEl = document.getElementById(id);
+      if (!valueEl) return;
+      const pair = valueEl.closest('.setting-pair');
+      if (!pair) return;
+      const label = pair.querySelector('.setting-label');
+      if (!label) return;
+
+      const badge = document.createElement('button');
+      badge.className = 'annotation-badge';
+      badge.setAttribute('aria-label', 'Why this setting');
+      badge.setAttribute('type', 'button');
+      badge.textContent = 'ⓘ';
+
+      badge.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this._toggleAnnotationPopover(badge, text);
+      });
+
+      label.appendChild(badge);
+    });
   }
 
   _setupInstallNudge() {
