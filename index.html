@@ -126,6 +126,24 @@
             </div>
           </div>
         </div>
+        <div class="reference-section">
+          <label id="reference-upload-label" for="reference-input" class="reference-upload-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+            </svg>
+            Add reference photo
+          </label>
+          <input type="file" id="reference-input" accept="image/*" class="hidden">
+          <div id="reference-preview" class="reference-preview hidden">
+            <img id="reference-img" class="reference-img" alt="Reference photo">
+            <button id="reference-clear" class="reference-clear" aria-label="Remove reference photo">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
         <div id="compare-table-container">
           <p class="placeholder-text">Select two or more recipes to compare</p>
         </div>
@@ -239,6 +257,7 @@
 
   <script src="js/recipes.js"></script>
   <script src="js/storage.js"></script>
+  <script src="js/imageStorage.js"></script>
   <script src="js/permissions.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/ui.js"></script>

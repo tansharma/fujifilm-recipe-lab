@@ -1,5 +1,57 @@
 class ComparisonManager {
-  init() {}
+  constructor() {
+    this._objectUrl = null;
+  }
+
+  init() {
+    this._setupReferenceUI();
+    imageStorage.init()
+      .then(() => this._restorePersistedImage())
+      .catch(() => {});
+  }
+
+  _setupReferenceUI() {
+    document.getElementById('reference-input').addEventListener('change', async e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      await this._applyImage(file);
+      navigator.vibrate?.(10);
+      e.target.value = '';
+    });
+
+    document.getElementById('reference-clear').addEventListener('click', async () => {
+      await this._removeImage();
+    });
+  }
+
+  async _applyImage(blob) {
+    this._revokeUrl();
+    this._objectUrl = URL.createObjectURL(blob);
+    document.getElementById('reference-img').src = this._objectUrl;
+    document.getElementById('reference-preview').classList.remove('hidden');
+    document.getElementById('reference-upload-label').classList.add('hidden');
+    imageStorage.save(blob).catch(() => {});
+  }
+
+  async _removeImage() {
+    this._revokeUrl();
+    document.getElementById('reference-img').src = '';
+    document.getElementById('reference-preview').classList.add('hidden');
+    document.getElementById('reference-upload-label').classList.remove('hidden');
+    imageStorage.clear().catch(() => {});
+  }
+
+  async _restorePersistedImage() {
+    const blob = await imageStorage.load().catch(() => null);
+    if (blob) await this._applyImage(blob);
+  }
+
+  _revokeUrl() {
+    if (this._objectUrl) {
+      URL.revokeObjectURL(this._objectUrl);
+      this._objectUrl = null;
+    }
+  }
 
   renderComparisonTable() {
     const container = document.getElementById('compare-table-container');
