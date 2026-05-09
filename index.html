@@ -233,6 +233,24 @@
           </div>
         </div>
 
+        <div class="recipe-preview-section">
+          <label id="preview-upload-label" for="preview-input" class="preview-upload-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+            </svg>
+            Preview with your photo
+          </label>
+          <input type="file" id="preview-input" accept="image/*" class="hidden">
+          <div id="preview-container" class="preview-container hidden">
+            <img id="preview-img" class="preview-img" alt="Preview photo with recipe filter applied">
+            <button id="preview-clear" class="preview-clear" aria-label="Remove preview photo">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
         <div class="recipe-tip-section">
           <h3 class="tip-title">Usage & guidance</h3>
           <p id="recipe-tip" class="tip-text">—</p>

@@ -2,6 +2,7 @@ class UIManager {
   constructor() {
     this.currentMode = 'presets';
     this.currentRecipe = null;
+    this._previewObjectUrl = null;
   }
 
   init() {
@@ -9,6 +10,7 @@ class UIManager {
     this.indexRecipeButtons();
     this.restoreCameraSelection();
     this.populateComparisonDropdowns();
+    this._setupPreviewUI();
   }
 
   indexRecipeButtons() {
@@ -256,6 +258,7 @@ class UIManager {
     this.applyCompatibilityFilter(recipe, camera);
     this.updateDRNote(recipe, camera);
     this.applyFallbackHints(recipe, camera);
+    this._updatePreviewFilter(recipe);
 
     card.classList.remove('hidden');
   }
@@ -349,6 +352,80 @@ class UIManager {
       hint.textContent = '→ use Off';
       hint.classList.remove('hidden');
     }
+  }
+
+  _recipeToFilter(recipe) {
+    const high   = parseInt(recipe.high)  || 0;
+    const shad   = parseInt(recipe.shad)  || 0;
+    const color  = recipe.color === 'N/A' ? 0 : (parseInt(recipe.color) || 0);
+    const sharp  = parseInt(recipe.sharp) || 0;
+    const isBW   = recipe.film.includes('Acros') || recipe.film.startsWith('Monochrome');
+
+    // Brightness: highlight tone (3% per step) + shadow lift (1.5% per step)
+    const bright = Math.round(Math.min(130, Math.max(75,
+      100 + (high * 3) + (shad * 1.5)
+    )));
+
+    // Contrast: DR widens tonal range (flattens contrast); sharpness adds micro-contrast
+    const drBase = { DR100: 100, DR200: 93, DR400: 86 }[recipe.dr] ?? 100;
+    const contrast = Math.round(Math.min(110, Math.max(75, drBase + sharp)));
+
+    // Saturation: 0 for BW films; Velvia gets a +20 boost on top of color setting
+    let saturate = 0;
+    if (!isBW) {
+      let sat = 100 + (color * 15);
+      if (recipe.film === 'Velvia') sat += 20;
+      saturate = Math.round(Math.min(200, Math.max(0, sat)));
+    }
+
+    // WB: warm R shift → sepia wash; cool R shift → slight hue rotation
+    let sepia = 0;
+    let hueRot = 0;
+    if (recipe.wb !== 'N/A') {
+      const m = recipe.wb.match(/R:\s*([+-]?\d+)/);
+      const r = m ? parseInt(m[1]) : 0;
+      if (r > 0) sepia  = Math.min(20, r * 5);
+      else if (r < 0) hueRot = Math.min(12, Math.abs(r) * 3);
+    }
+
+    let f = `brightness(${bright}%) contrast(${contrast}%) saturate(${saturate}%)`;
+    if (sepia)  f += ` sepia(${sepia}%)`;
+    if (hueRot) f += ` hue-rotate(${hueRot}deg)`;
+    if (isBW)   f += ' grayscale(100%)';
+    return f;
+  }
+
+  _setupPreviewUI() {
+    document.getElementById('preview-input').addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (this._previewObjectUrl) URL.revokeObjectURL(this._previewObjectUrl);
+      this._previewObjectUrl = URL.createObjectURL(file);
+      const img = document.getElementById('preview-img');
+      img.src = this._previewObjectUrl;
+      if (this.currentRecipe) img.style.filter = this._recipeToFilter(this.currentRecipe);
+      document.getElementById('preview-container').classList.remove('hidden');
+      document.getElementById('preview-upload-label').classList.add('hidden');
+      navigator.vibrate?.(10);
+      e.target.value = '';
+    });
+
+    document.getElementById('preview-clear').addEventListener('click', () => {
+      if (this._previewObjectUrl) {
+        URL.revokeObjectURL(this._previewObjectUrl);
+        this._previewObjectUrl = null;
+      }
+      const img = document.getElementById('preview-img');
+      img.src = '';
+      img.style.filter = '';
+      document.getElementById('preview-container').classList.add('hidden');
+      document.getElementById('preview-upload-label').classList.remove('hidden');
+    });
+  }
+
+  _updatePreviewFilter(recipe) {
+    if (!this._previewObjectUrl) return;
+    document.getElementById('preview-img').style.filter = this._recipeToFilter(recipe);
   }
 
   copyRecipeToClipboard() {
