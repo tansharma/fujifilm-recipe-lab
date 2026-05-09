@@ -55,6 +55,10 @@ class UIManager {
     document.getElementById('copy-button').addEventListener('click', () => {
       this.copyRecipeToClipboard();
     });
+
+    document.getElementById('share-button').addEventListener('click', () => {
+      this.shareRecipe();
+    });
   }
 
   switchTab(mode) {
@@ -245,12 +249,34 @@ Pro Tip: Set Exposure Compensation to -0.3 or -0.7 to protect highlights and dee
 
     navigator.clipboard.writeText(text)
       .then(() => {
+        navigator.vibrate?.(10);
         appStorage.addToHistory(recipe.key, 'export');
         this.showToast('Recipe copied to clipboard');
       })
       .catch(err => {
         this.showToast('Failed to copy: ' + err.message);
       });
+  }
+
+  shareRecipe() {
+    if (!this.currentRecipe) return;
+
+    const recipe = this.currentRecipe;
+    const url = `${location.origin}${location.pathname}#recipe/${recipe.key}`;
+
+    if (navigator.share) {
+      navigator.share({ title: recipe.title, url })
+        .catch(err => {
+          if (err.name !== 'AbortError') this.showToast('Unable to share');
+        });
+    } else {
+      navigator.clipboard.writeText(url)
+        .then(() => {
+          navigator.vibrate?.(10);
+          this.showToast('Link copied to clipboard');
+        })
+        .catch(() => this.showToast('Unable to copy link'));
+    }
   }
 
   populateHistory() {
