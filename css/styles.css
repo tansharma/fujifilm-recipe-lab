@@ -494,6 +494,19 @@ body {
   gap: 0.25rem;
 }
 
+.setting-value-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.setting-sub-note {
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: var(--text-3);
+  letter-spacing: 0.01em;
+}
+
 .setting-pair.incompatible {
   opacity: 0.3;
   transition: opacity 0.2s;
