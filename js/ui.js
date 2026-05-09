@@ -6,8 +6,18 @@ class UIManager {
 
   init() {
     this.setupEventDelegation();
+    this.indexRecipeButtons();
     this.restoreCameraSelection();
     this.populateComparisonDropdowns();
+  }
+
+  indexRecipeButtons() {
+    document.querySelectorAll('[data-recipe]').forEach((btn, i) => {
+      btn.dataset.originalIndex = i;
+    });
+    document.querySelectorAll('[data-film]').forEach((btn, i) => {
+      btn.dataset.originalIndex = i;
+    });
   }
 
   setupEventDelegation() {
@@ -100,13 +110,73 @@ class UIManager {
   }
 
   filterRecipeButtons(camera) {
-    document.querySelectorAll('[data-recipe]').forEach(btn => {
-      const recipe = getRecipeByKey(btn.dataset.recipe);
-      btn.classList.toggle('hidden', !!(camera && recipe && !recipe.compatibility.includes(camera)));
-    });
-    document.querySelectorAll('[data-film]').forEach(btn => {
-      const recipe = getRecipeByKey(btn.dataset.film);
-      btn.classList.toggle('hidden', !!(camera && recipe && !recipe.compatibility.includes(camera)));
+    [
+      { selector: '[data-recipe]', keyAttr: 'recipe' },
+      { selector: '[data-film]', keyAttr: 'film' }
+    ].forEach(({ selector, keyAttr }) => {
+      const buttons = [...document.querySelectorAll(selector)];
+
+      const grids = new Map();
+      buttons.forEach(btn => {
+        const grid = btn.parentElement;
+        if (!grids.has(grid)) grids.set(grid, []);
+        grids.get(grid).push(btn);
+      });
+
+      grids.forEach((btns, grid) => {
+        grid.querySelector('.extended-library-divider')?.remove();
+
+        if (!camera) {
+          btns
+            .sort((a, b) => Number(a.dataset.originalIndex) - Number(b.dataset.originalIndex))
+            .forEach(btn => {
+              btn.classList.remove('hidden', 'extended-library');
+              grid.appendChild(btn);
+            });
+          return;
+        }
+
+        const fully = [], partial = [], hidden = [];
+        btns.forEach(btn => {
+          const key = btn.dataset[keyAttr];
+          const recipe = getRecipeByKey(key);
+          if (!recipe || !recipe.compatibility.includes(camera)) {
+            hidden.push(btn);
+          } else if (isRecipeFullyCompatible(key, camera)) {
+            fully.push(btn);
+          } else {
+            partial.push(btn);
+          }
+        });
+
+        const byIndex = arr =>
+          arr.sort((a, b) => Number(a.dataset.originalIndex) - Number(b.dataset.originalIndex));
+
+        byIndex(fully).forEach(btn => {
+          btn.classList.remove('hidden', 'extended-library');
+          grid.appendChild(btn);
+        });
+
+        if (partial.length > 0) {
+          const divider = document.createElement('div');
+          divider.className = 'extended-library-divider';
+          divider.textContent = 'extended library';
+          divider.setAttribute('aria-hidden', 'true');
+          grid.appendChild(divider);
+
+          byIndex(partial).forEach(btn => {
+            btn.classList.remove('hidden');
+            btn.classList.add('extended-library');
+            grid.appendChild(btn);
+          });
+        }
+
+        byIndex(hidden).forEach(btn => {
+          btn.classList.add('hidden');
+          btn.classList.remove('extended-library');
+          grid.appendChild(btn);
+        });
+      });
     });
   }
 

@@ -365,3 +365,25 @@ function isRecipeCompatibleWithCamera(recipeKey, cameraKey) {
   if (!recipe) return false;
   return recipe.compatibility.includes(cameraKey);
 }
+
+function isRecipeFullyCompatible(recipeKey, cameraKey) {
+  if (!cameraKey) return true;
+  const recipe = getRecipeByKey(recipeKey);
+  if (!recipe || !recipe.compatibility.includes(cameraKey)) return false;
+
+  const limitations = CAMERA_INFO[cameraKey]?.limitations ?? {};
+
+  if (limitations.noAcros && recipe.film.includes('Acros')) return false;
+  if (limitations.noGrainEffect && recipe.grain !== 'None') return false;
+  if (limitations.maxHighlight != null) {
+    const val = parseInt(recipe.high, 10);
+    if (!isNaN(val) && Math.abs(val) > limitations.maxHighlight) return false;
+  }
+  if (limitations.maxShadow != null) {
+    const val = parseInt(recipe.shad, 10);
+    if (!isNaN(val) && Math.abs(val) > limitations.maxShadow) return false;
+  }
+  if (limitations.noColorChromeBlue && recipe.chrome_blue !== 'Off') return false;
+
+  return true;
+}
