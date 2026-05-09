@@ -90,6 +90,9 @@ class UIManager {
     });
     document.getElementById('compare-table-container').innerHTML =
       '<p class="placeholder-text">Select two or more recipes to compare</p>';
+    if (this.currentRecipe) {
+      this.applyCompatibilityFilter(this.currentRecipe, cameraKey);
+    }
   }
 
   filterRecipeButtons(camera) {
@@ -172,7 +175,38 @@ class UIManager {
     document.getElementById('recipe-grain').textContent = recipe.grain;
     document.getElementById('recipe-tip').textContent = recipe.tip;
 
+    const camera = document.getElementById('camera-select').value;
+    this.applyCompatibilityFilter(recipe, camera);
+
     card.classList.remove('hidden');
+  }
+
+  applyCompatibilityFilter(recipe, camera) {
+    document.querySelectorAll('#recipe-card .setting-pair').forEach(el => {
+      el.classList.remove('incompatible');
+    });
+
+    if (!camera) return;
+    const limitations = CAMERA_INFO[camera]?.limitations ?? {};
+
+    if (limitations.noAcros && recipe.film.includes('Acros')) {
+      document.getElementById('recipe-film').closest('.setting-pair').classList.add('incompatible');
+    }
+    if (limitations.noGrainEffect && recipe.grain !== 'None') {
+      document.getElementById('recipe-grain').closest('.setting-pair').classList.add('incompatible');
+    }
+    if (limitations.maxHighlight != null) {
+      const val = parseInt(recipe.high, 10);
+      if (!isNaN(val) && Math.abs(val) > limitations.maxHighlight) {
+        document.getElementById('recipe-high').closest('.setting-pair').classList.add('incompatible');
+      }
+    }
+    if (limitations.maxShadow != null) {
+      const val = parseInt(recipe.shad, 10);
+      if (!isNaN(val) && Math.abs(val) > limitations.maxShadow) {
+        document.getElementById('recipe-shad').closest('.setting-pair').classList.add('incompatible');
+      }
+    }
   }
 
   copyRecipeToClipboard() {
