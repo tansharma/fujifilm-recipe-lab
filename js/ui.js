@@ -107,6 +107,7 @@ class UIManager {
     if (this.currentRecipe) {
       this.applyCompatibilityFilter(this.currentRecipe, cameraKey);
       this.updateDRNote(this.currentRecipe, cameraKey);
+      this.applyFallbackHints(this.currentRecipe, cameraKey);
     }
   }
 
@@ -254,6 +255,7 @@ class UIManager {
     const camera = document.getElementById('camera-select').value;
     this.applyCompatibilityFilter(recipe, camera);
     this.updateDRNote(recipe, camera);
+    this.applyFallbackHints(recipe, camera);
 
     card.classList.remove('hidden');
   }
@@ -299,6 +301,54 @@ class UIManager {
     }
     note.textContent = `Requires ISO ${minISO}+`;
     note.classList.remove('hidden');
+  }
+
+  applyFallbackHints(recipe, camera) {
+    document.querySelectorAll('#recipe-card .fallback-hint').forEach(el => {
+      el.textContent = '';
+      el.classList.add('hidden');
+    });
+
+    if (!camera || !recipe) return;
+    const limitations = CAMERA_INFO[camera]?.limitations ?? {};
+
+    if (limitations.noAcros && recipe.film.includes('Acros')) {
+      const hint = document.getElementById('recipe-film-fallback');
+      hint.textContent = '→ try Monochrome';
+      hint.classList.remove('hidden');
+    }
+
+    if (limitations.noGrainEffect && recipe.grain !== 'None') {
+      const hint = document.getElementById('recipe-grain-fallback');
+      hint.textContent = '→ use None';
+      hint.classList.remove('hidden');
+    }
+
+    if (limitations.maxHighlight != null) {
+      const val = parseInt(recipe.high, 10);
+      if (!isNaN(val) && Math.abs(val) > limitations.maxHighlight) {
+        const clamped = val > 0 ? `+${limitations.maxHighlight}` : `-${limitations.maxHighlight}`;
+        const hint = document.getElementById('recipe-high-fallback');
+        hint.textContent = `→ use ${clamped}`;
+        hint.classList.remove('hidden');
+      }
+    }
+
+    if (limitations.maxShadow != null) {
+      const val = parseInt(recipe.shad, 10);
+      if (!isNaN(val) && Math.abs(val) > limitations.maxShadow) {
+        const clamped = val > 0 ? `+${limitations.maxShadow}` : `-${limitations.maxShadow}`;
+        const hint = document.getElementById('recipe-shad-fallback');
+        hint.textContent = `→ use ${clamped}`;
+        hint.classList.remove('hidden');
+      }
+    }
+
+    if (limitations.noColorChromeBlue && recipe.chrome_blue !== 'Off') {
+      const hint = document.getElementById('recipe-chrome-blue-fallback');
+      hint.textContent = '→ use Off';
+      hint.classList.remove('hidden');
+    }
   }
 
   copyRecipeToClipboard() {
