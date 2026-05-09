@@ -916,6 +916,60 @@ body {
   color: var(--text);
 }
 
+/* ─── Annotation badges & popover ─────────────────────────────────────────── */
+
+.annotation-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  margin-left: 4px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-2);
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.55;
+  vertical-align: middle;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+
+.annotation-badge:hover,
+.annotation-badge:focus-visible {
+  opacity: 1;
+  outline: none;
+}
+
+.annotation-popover {
+  position: fixed;
+  z-index: 300;
+  max-width: 240px;
+  background: var(--surface);
+  border: 1px solid var(--border-med);
+  border-radius: 10px;
+  padding: 10px 13px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.08);
+  pointer-events: auto;
+  animation: popover-in 0.15s ease;
+}
+
+@keyframes popover-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.annotation-text {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-2);
+  margin: 0;
+}
+
 /* ─── History ─────────────────────────────────────────────────────────────── */
 
 .history-list {
