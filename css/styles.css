@@ -314,6 +314,25 @@ body {
   border-color: var(--accent);
 }
 
+/* ─── Smart Sort: Extended Library section ────────────────────────────────── */
+
+.extended-library-divider {
+  grid-column: 1 / -1;
+  text-align: center;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  padding: 10px 0 4px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.recipe-button.extended-library {
+  opacity: 0.55;
+}
+
 /* ─── Compare tab ─────────────────────────────────────────────────────────── */
 
 .slot-label {
