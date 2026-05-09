@@ -1,4 +1,4 @@
-const CACHE_NAME = 'recipe-lab-v1';
+const CACHE_NAME = 'recipe-lab-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -7,9 +7,11 @@ const ASSETS_TO_CACHE = [
   '/js/app.js',
   '/js/recipes.js',
   '/js/storage.js',
+  '/js/imageStorage.js',
   '/js/ui.js',
   '/js/comparison.js',
-  '/js/permissions.js'
+  '/js/permissions.js',
+  '/js/theme.js'
 ];
 
 self.addEventListener('install', event => {
