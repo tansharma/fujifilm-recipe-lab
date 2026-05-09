@@ -2,6 +2,58 @@
 
 ---
 
+# Camera Compatibility Filter
+
+**Branch:** `feature/camera-compatibility`
+
+## What the filter does
+
+When a recipe card is displayed, each setting row that is unavailable or out-of-range for the selected camera generation is given the CSS class `incompatible`, reducing its opacity to 0.3. No warning text is added. Switching cameras while a recipe card is open re-evaluates the filter immediately.
+
+## Mapping: `CAMERA_INFO.limitations` → displayed setting rows
+
+The filter is driven exclusively by the `limitations` object on each `CAMERA_INFO` entry in `recipes.js`. The table below shows every flag, which setting row it controls, and the condition that triggers dimming.
+
+| Flag | Setting row | Dimmed when |
+|---|---|---|
+| `noAcros` | Film simulation (`recipe-film`) | `recipe.film` contains `"Acros"` |
+| `noGrainEffect` | Grain effect (`recipe-grain`) | `recipe.grain !== "None"` |
+| `maxHighlight: 2` | Highlight tone (`recipe-high`) | `|parseInt(recipe.high)| > 2` |
+| `maxShadow: 2` | Shadow tone (`recipe-shad`) | `|parseInt(recipe.shad)| > 2` |
+
+**Current camera matrix:**
+
+| Camera | `noAcros` | `noGrainEffect` | `maxHighlight` | `maxShadow` | `noColorChrome` |
+|---|---|---|---|---|---|
+| X-Trans II | ✓ | ✓ | 2 | 2 | — |
+| X-Trans III | — | — | — | — | ✓ |
+| X-Trans IV | — | — | — | — | — |
+| X-Trans V | — | — | — | — | — |
+
+## Why `noClarity` and `noColorChrome` are not mapped
+
+Both flags exist in `CAMERA_INFO.limitations` but neither Clarity nor Color Chrome is a displayed setting in the current recipe card. They are intentionally left as unmapped metadata — they will become relevant if Clarity/Color Chrome fields are added to the recipe card in the future.
+
+## Why dimming is value-conditional for Acros and Grain
+
+`noGrainEffect` disables the entire Grain Effect setting on the camera body. However, many recipes set `grain: "None"` — and a recipe with no grain produces the same result on X-Trans II as on any other body. Dimming it when the recipe value is `"None"` would be noise, not signal. The same logic applies to Acros: `Film Simulation` itself is available on X-Trans II; only the Acros mode is absent. So the film row is dimmed only when the recipe actually uses Acros.
+
+Grain Effect and Film Simulation differ from Highlight/Shadow in this respect. The tone range is an absolute hardware cap regardless of the recipe value — so `maxHighlight`/`maxShadow` dim the row as soon as the recipe's value exceeds the cap, regardless of direction.
+
+## Where the logic lives
+
+| Concern | Location |
+|---|---|
+| Capability metadata | `js/recipes.js` — `CAMERA_INFO[key].limitations` |
+| Dimming rules | `js/ui.js` — `UIManager.applyCompatibilityFilter(recipe, camera)` |
+| CSS state | `css/styles.css` — `.setting-pair.incompatible { opacity: 0.3 }` |
+
+`applyCompatibilityFilter` is called from two sites in `UIManager`:
+1. `displayRecipeCard()` — on every recipe load
+2. `onCameraChanged()` — when the camera dropdown changes while a card is already visible
+
+---
+
 # URL Fragment Routing
 
 **Branch:** `feature/recipe-routing`

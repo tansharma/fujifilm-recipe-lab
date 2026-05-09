@@ -475,6 +475,11 @@ body {
   gap: 0.25rem;
 }
 
+.setting-pair.incompatible {
+  opacity: 0.3;
+  transition: opacity 0.2s;
+}
+
 .setting-label {
   font-size: 12px;
   color: var(--text-2);

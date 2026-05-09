@@ -303,7 +303,9 @@ const CAMERA_INFO = {
     limitations: {
       noAcros: true,
       noGrainEffect: true,
-      noClarity: true
+      noClarity: true,
+      maxHighlight: 2,
+      maxShadow: 2
     },
     warning: "X-Trans II has limited advanced settings. Some recipes may need adjustments."
   },
