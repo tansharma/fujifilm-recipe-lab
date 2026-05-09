@@ -16,8 +16,31 @@ class RecipeLabApp {
     this.restoreState();
     appUI.populateHistory();
 
+    window.addEventListener('hashchange', () => this.handleHash());
+    this.handleHash();
+
     this.initialized = true;
     console.log('Recipe Lab initialized');
+  }
+
+  handleHash() {
+    const match = window.location.hash.match(/^#recipe\/(.+)$/);
+    if (!match) return;
+
+    const key = match[1];
+    const recipe = getRecipeByKey(key);
+    if (!recipe) return;
+
+    const cameraSelect = document.getElementById('camera-select');
+    if (!cameraSelect.value && recipe.compatibility.length > 0) {
+      const cam = recipe.compatibility[0];
+      cameraSelect.value = cam;
+      appStorage.setSelectedCamera(cam);
+      appUI.onCameraChanged(cam);
+    }
+
+    const source = recipe.style.includes('Film') ? 'film' : 'preset';
+    appUI.loadRecipe(key, source);
   }
 
   restoreState() {
