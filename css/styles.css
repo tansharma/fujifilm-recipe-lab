@@ -201,6 +201,78 @@ body {
   letter-spacing: 0.5px;
 }
 
+/* ─── iOS Install Nudge ───────────────────────────────────────────────────── */
+
+.install-nudge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.install-nudge-body {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.install-nudge-icon {
+  flex-shrink: 0;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+}
+
+.install-nudge-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.install-nudge-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.install-nudge-sub {
+  font-size: 12px;
+  color: var(--text-2);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-wrap: wrap;
+}
+
+.install-nudge-dismiss {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: var(--text-3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 50%;
+  transition: background 0.15s, color 0.15s;
+}
+
+.install-nudge-dismiss:hover {
+  background: var(--surface-lo);
+  color: var(--text-2);
+}
+
 /* ─── Camera select ───────────────────────────────────────────────────────── */
 
 .input-select {

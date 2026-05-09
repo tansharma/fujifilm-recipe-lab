@@ -11,6 +11,7 @@ class UIManager {
     this.restoreCameraSelection();
     this.populateComparisonDropdowns();
     this._setupPreviewUI();
+    this._setupInstallNudge();
   }
 
   indexRecipeButtons() {
@@ -558,6 +559,23 @@ Pro Tip: Set Exposure Compensation to -0.3 or -0.7 to protect highlights and dee
     this.restoreCameraSelection();
     this.populateComparisonDropdowns();
     this.populateHistory();
+  }
+
+  _setupInstallNudge() {
+    // navigator.standalone is a boolean only on iOS Safari.
+    // false = running in browser (not yet installed as PWA).
+    // undefined on all non-iOS browsers — typeof guard avoids false positives.
+    const isIOSBrowser = typeof window.navigator.standalone === 'boolean'
+      && !window.navigator.standalone;
+    const isDismissed = !!localStorage.getItem('recipe_lab_install_dismissed');
+
+    if (!isIOSBrowser || isDismissed) return;
+
+    document.getElementById('install-nudge').classList.remove('hidden');
+    document.getElementById('install-nudge-dismiss').addEventListener('click', () => {
+      document.getElementById('install-nudge').classList.add('hidden');
+      localStorage.setItem('recipe_lab_install_dismissed', '1');
+    });
   }
 }
 
