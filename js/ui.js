@@ -106,6 +106,7 @@ class UIManager {
       '<p class="placeholder-text">Select two or more recipes to compare</p>';
     if (this.currentRecipe) {
       this.applyCompatibilityFilter(this.currentRecipe, cameraKey);
+      this.updateDRNote(this.currentRecipe, cameraKey);
     }
   }
 
@@ -252,6 +253,7 @@ class UIManager {
 
     const camera = document.getElementById('camera-select').value;
     this.applyCompatibilityFilter(recipe, camera);
+    this.updateDRNote(recipe, camera);
 
     card.classList.remove('hidden');
   }
@@ -285,6 +287,18 @@ class UIManager {
     if (limitations.noColorChromeBlue && recipe.chrome_blue !== 'Off') {
       document.getElementById('recipe-chrome-blue').closest('.setting-pair').classList.add('incompatible');
     }
+  }
+
+  updateDRNote(recipe, camera) {
+    const note = document.getElementById('recipe-dr-note');
+    const minISO = camera && recipe ? CAMERA_INFO[camera]?.drMinISO?.[recipe.dr] : null;
+    if (!minISO) {
+      note.textContent = '';
+      note.classList.add('hidden');
+      return;
+    }
+    note.textContent = `Requires ISO ${minISO}+`;
+    note.classList.remove('hidden');
   }
 
   copyRecipeToClipboard() {

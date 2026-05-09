@@ -326,6 +326,7 @@ const CAMERA_INFO = {
       maxHighlight: 2,
       maxShadow: 2
     },
+    drMinISO: { DR200: 400, DR400: 800 },
     warning: "X-Trans II has limited advanced settings. Some recipes may need adjustments."
   },
   "x-trans-3": {
@@ -334,16 +335,19 @@ const CAMERA_INFO = {
       noColorChrome: true,
       noColorChromeBlue: true
     },
+    drMinISO: { DR200: 400, DR400: 800 },
     warning: null
   },
   "x-trans-4": {
     name: "X-Trans IV (X-T4, X-S10, X-T3)",
     limitations: {},
+    drMinISO: { DR200: 320, DR400: 640 },
     warning: null
   },
   "x-trans-5": {
     name: "X-Trans V (X-T5, X-H2, X100VI)",
     limitations: {},
+    drMinISO: { DR200: 250, DR400: 500 },
     warning: null
   }
 };
